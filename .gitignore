@@ -1,0 +1,26 @@
+# --- Security ---
+.env
+.DS_Store
+secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.pytest_cache/
+
+# --- Data
+# Ignore all data by default...
+data/
+!data/**/*.dvc
+!data/**/.gitignore
+!data/**/*.md
+
+# --- DVC ---
+.dvc/tmp/
+.dvc/cache/
+
+# --- IDE ---
+.vscode/
+.idea/
