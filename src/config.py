@@ -24,3 +24,10 @@ OVERWRITE = False
 # API Retry Settings
 MAX_RETRIES = 3
 RETRY_DELAY = 5  # Seconds
+
+# --- ENTITY RESOLUTION CONFIG ---
+# The specific files we compare to create the Master Player Map
+# We use 2025 because it contains the most recent active roster including 2025 rookies
+MERGE_WNBA_SOURCE = RAW_DATA_DIR / "wnba_2025_gamelogs.csv"
+MERGE_UNRIVALED_SOURCE = PROCESSED_DATA_DIR / "unrivaled_2025_processed.csv"
+PLAYER_MAP_OUTPUT = PROCESSED_DATA_DIR / "player_mapping.csv"
