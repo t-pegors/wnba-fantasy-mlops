@@ -1,0 +1,5 @@
+outs:
+- md5: c719a775652913a36498c51e0de36a46
+  size: 1026930
+  hash: md5
+  path: wnba_2024_gamelogs.csv

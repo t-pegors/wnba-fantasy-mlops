@@ -1,0 +1,5 @@
+outs:
+- md5: 59799468ab727798c522ab1700e7bf05
+  size: 1032683
+  hash: md5
+  path: wnba_2023_gamelogs.csv
