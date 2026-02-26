@@ -1,8 +1,10 @@
 # --- Data Engineering ---
 pandas
+numpy
 requests
 beautifulsoup4
 lxml
+nba_api
 
 # --- MLOps & Tracking ---
 dvc[s3]
