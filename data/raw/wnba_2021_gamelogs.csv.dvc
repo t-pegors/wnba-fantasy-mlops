@@ -1,0 +1,5 @@
+outs:
+- md5: 778e306502b1157404ed06ac48f551bc
+  size: 810558
+  hash: md5
+  path: wnba_2021_gamelogs.csv

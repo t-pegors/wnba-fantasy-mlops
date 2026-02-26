@@ -1,0 +1,5 @@
+outs:
+- md5: 05aa4e9e064bcab41ee6883c42ddf0ac
+  size: 931510
+  hash: md5
+  path: wnba_2022_gamelogs.csv
