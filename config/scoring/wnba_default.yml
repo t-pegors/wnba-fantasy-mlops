@@ -1,0 +1,10 @@
+name: "ESPN WNBA Default"
+description: "Standard default scoring for ESPN WNBA Fantasy leagues."
+weights:
+  PTS: 1.0
+  REB: 1.0
+  AST: 1.0
+  STL: 2.0
+  BLK: 2.0
+  FG3M: 1.0
+  TOV: 0.0

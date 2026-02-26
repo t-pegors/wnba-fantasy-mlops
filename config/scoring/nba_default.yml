@@ -1,0 +1,10 @@
+name: "FanDuel NBA Standard"
+description: "Mathematically balanced daily fantasy scoring."
+weights:
+  PTS: 1.0
+  REB: 1.2
+  AST: 1.5
+  STL: 3.0
+  BLK: 3.0
+  TOV: -1.0
+  FG3M: 0.0
