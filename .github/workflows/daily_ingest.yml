@@ -36,6 +36,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2  
 
+      # Scrub the hardcoded laptop profile from the CI environment
+      - name: Clean DVC Config for CI
+        run: |
+          # This safely deletes any line containing "profile =" in the config
+          sed -i '/profile/d' .dvc/config
+        
       # DVC will now automatically find the credentials
       - name: Pull Historical Data with DVC
         run: dvc pull
