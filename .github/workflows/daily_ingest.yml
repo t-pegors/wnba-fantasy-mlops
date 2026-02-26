@@ -1,0 +1,60 @@
+name: Daily Data Ingestion
+
+# 1. Triggers
+on:
+  schedule:
+    - cron: '0 7 * * *' # Runs at 6:00 AM UTC daily (2am EST)
+  workflow_dispatch:    # The "Magic Button" to trigger it manually for testing
+
+jobs:
+  ingest-and-version:
+    runs-on: ubuntu-latest
+    
+    # Give the bot permission to push code back to your repo
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Data Scrapers
+        run: |
+          python src/data/wnba_loader.py
+          python src/data/unrivaled_loader.py
+
+      - name: Version Data with DVC & Push to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          # Configure DVC auth for this ephemeral runner
+          dvc remote modify --local myremote access_key_id $AWS_ACCESS_KEY_ID
+          dvc remote modify --local myremote secret_access_key $AWS_SECRET_ACCESS_KEY
+          
+          # Add new data and push to S3
+          dvc add data/raw/
+          dvc push
+
+      - name: Auto-Commit Updated DVC Pointers
+        run: |
+          # Set up the Git Bot identity
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage the DVC files
+          git add data/raw/*.dvc
+          
+          # Check if anything actually changed. If yes, commit and push.
+          git diff --staged --quiet || (git commit -m "action: automated daily data ingest" && git push)
