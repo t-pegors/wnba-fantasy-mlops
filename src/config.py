@@ -16,11 +16,11 @@ WNBA_LEAGUE_ID = '10'
 # List of seasons to fetch. 
 # WNBA seasons are typically referenced by year (e.g., '2024').
 # You can add past seasons here to build a historical dataset.
-SEASONS_TO_FETCH = ['2021', '2022', '2023', '2024', '2025']
+SEASONS_TO_FETCH = ['2021', '2022'] #, '2023', '2024', '2025']
 
 # --- PIPELINE CONTROL ---
 # Set to True if you want to force a re-download of existing data
-OVERWRITE = False
+OVERWRITE = True
 
 # API Retry Settings
 MAX_RETRIES = 3
@@ -35,7 +35,7 @@ PLAYER_MAP_OUTPUT = PROCESSED_DATA_DIR / "player_mapping.csv"
 
 # --- MODELING & FEATURE ENGINEERING PARAMETERS ---
 # Minimum number of games a player must play to be included
-MIN_GAMES_THRESHOLD = 5 
+MIN_GAMES_THRESHOLD = 10 
 
 # Feature Engineering: Rolling Average Windows
 ROLLING_WINDOW_SHORT = 3
@@ -63,7 +63,3 @@ def load_scoring_system(system_name=DEFAULT_SCORING_SYSTEM):
         
     print(f"Loaded Scoring System: {config_data['name']}")
     return config_data['weights']
-
-# --- MODELING & FILTERING PARAMETERS ---
-# Minimum number of games a player must play in a season to be included in training/baselines
-MIN_GAMES_THRESHOLD = 5

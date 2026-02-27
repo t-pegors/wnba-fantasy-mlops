@@ -36,7 +36,7 @@ def fetch_season_data(season):
                 return None
 
             # 2. Add Metadata
-            df['scraped_at'] = datetime.now().isoformat
+            df['scraped_at'] = datetime.now().isoformat()
             df['season_id'] = season
             
             return df

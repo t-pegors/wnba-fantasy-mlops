@@ -28,3 +28,4 @@ data/*
 
 # misc
 notes.md
+notebooks/*.ipynb

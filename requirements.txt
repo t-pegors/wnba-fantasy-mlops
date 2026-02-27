@@ -8,6 +8,10 @@ nba_api
 
 # --- MLOps & Tracking ---
 dvc[s3]
+pyyaml
+mlflow
+python-dotenv
+xgboost
 
 # --- Entity Resolution ---
 thefuzz
