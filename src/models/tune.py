@@ -8,6 +8,7 @@ from sklearn.model_selection import ParameterGrid
 import mlflow
 from mlflow.models.signature import infer_signature
 from dotenv import load_dotenv
+import time
 import warnings
 # Filter out the specific MLflow schema hint and the artifact_path deprecation
 warnings.filterwarnings("ignore", category=UserWarning, module="mlflow")
@@ -75,6 +76,16 @@ def tune_hyperparameters():
 
     # 6. The Automated Tuning Loop
     for i, params in enumerate(grid):
+        
+        # Add GPU parameters to every combination
+        params.update({
+            'tree_method': 'hist',
+            'device': 'cuda'
+        })
+
+        start_time = time.time()
+        print(f"🚀 [{i+1}/{len(grid)}] Training with {params}...")
+
         print(f"Testing combination {i+1}/{len(grid)}: {params}")
         
         with mlflow.start_run(run_name=f"grid_search_{i+1}"):
@@ -86,6 +97,12 @@ def tune_hyperparameters():
             
             # Predict & Evaluate
             preds = model.predict(X_test)
+
+            duration = time.time() - start_time
+            mlflow.log_metric("duration_seconds", duration) # Log to DagsHub
+            
+            print(f"✅ Run {i+1} complete in {duration:.2f}s | MAE: {mae:.4f}")
+
             mae = mean_absolute_error(y_test, preds)
             rmse = np.sqrt(mean_squared_error(y_test, preds))
             
