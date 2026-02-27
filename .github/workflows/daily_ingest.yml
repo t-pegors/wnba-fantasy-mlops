@@ -27,8 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Authenticate and Pull existing data BEFORE we scrape
-      # Official AWS Setup (Creates the hidden credentials file)
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -36,30 +34,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2  
 
-      # Scrub the hardcoded laptop profile from the CI environment
       - name: Clean DVC Config for CI
         run: |
-          # This safely deletes any line containing "profile =" in the config
           sed -i '/profile/d' .dvc/config
         
-      # DVC will now automatically find the credentials
+      # UPDATED: Targeted Pull with a Safety Net
       - name: Pull Historical Data with DVC
-        run: dvc pull
+        run: |
+          # Only pull the raw data needed for scraping, ignore ML models and features
+          dvc pull data/raw/*.dvc || echo "⚠️ Proceeding with available historical data."
 
-      # Prevent the WNBA timeout from crashing the pipeline
       - name: Run Data Scrapers
         run: |
-          # The '|| true' means "If this fails, print a warning but keep going"
           python src/data/wnba_loader.py || echo "⚠️ WNBA scraper failed (likely IP block). Using historical data."
-          
-          # Unrivaled doesn't block GitHub, so this will succeed
           python src/data/unrivaled_loader.py
 
-      # UPDATED: Add files individually using a wildcard to avoid the Overlap error
       - name: Version Data with DVC & Push to S3
         run: |
           dvc add data/raw/*.csv
-          dvc push
+          dvc push data/raw/*.dvc
 
       - name: Auto-Commit Updated DVC Pointers
         run: |
