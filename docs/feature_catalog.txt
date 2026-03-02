@@ -1,0 +1,70 @@
+WNBA FANTASY FEATURE CATALOG
+Project: WNBA-Fantasy-MLOps
+Last Updated: 2026-03-02
+Model: XGBoost v1.2 (Run: e8f4d28b)
+
+================================================================
+
+CORE METADATA (DROPPED DURING TRAINING)
+================================================================
+    These columns are used for data integrity and joining but are
+    removed before the model training to prevent data leakage.
+
+    PLAYER_ID: Unique identifier for the athlete.
+
+    GAME_DATE: Used for chronological sorting (Prevents time-travel bias).
+
+    SEASON: The WNBA season year.
+
+================================================================
+"ANCHOR" FEATURE
+
+    FPTS_SEASON_AVG:
+    Type: Float
+    Logic: Running average of Fantasy Points for the current
+    season up to the current game.
+    Intuition: Acts as the statistical "floor" the model
+    attempts to refine.
+
+================================================================
+CONTEXTUAL & FATIGUE FEATURES
+
+    IS_HOME:
+    Logic: Binary (1 = Home, 0 = Away).
+    Intuition: Players often see a performance boost from
+    familiar shooting backdrops and home crowds.
+
+    DAYS_REST:
+    Logic: current_game_date - previous_game_date.
+    Intuition: Measures physical recovery time. High-usage
+    players typically see a dip on short rest.
+
+    IS_BACK_TO_BACK:
+    Logic: Boolean (True if DAYS_REST == 1).
+    Intuition: Identifies "schedule losses" where fatigue
+    and travel overlap.
+
+================================================================
+STRENGTH OF SCHEDULE & MATCHUP
+
+    TEAM_WIN_PCT:
+    Logic: Rolling win percentage of the player's team.
+    Intuition: High-performing teams may have more
+    distributed scoring or bench rotations.
+
+    OPP_WIN_PCT:
+    Logic: Rolling win percentage of the opponent.
+    Intuition: A proxy for defensive difficulty.
+
+    WIN_PCT_DIFF:
+    Logic: TEAM_WIN_PCT - OPP_WIN_PCT.
+    Intuition: Highlights mismatches. High positives suggest
+    blowout risks; near-zero suggests high-intensity
+    games where starters play more minutes.
+
+================================================================
+TARGET VARIABLE
+
+    FANTASY_PTS:
+    The total points earned based on box score stats (PTS, REB,
+    AST, etc.). This is the value the model is trained to predict.

@@ -29,3 +29,6 @@ data/*
 # misc
 notes.md
 notebooks/*.ipynb
+src/models/model.ubj
+src/diagnostics/
+reports/

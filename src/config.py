@@ -41,6 +41,28 @@ MIN_GAMES_THRESHOLD = 10
 ROLLING_WINDOW_SHORT = 3
 ROLLING_WINDOW_LONG = 10
 
+# Columns that should NEVER be seen by the model (Metadata/Leakage)
+DROPPED_FEATURES = [
+    'PLAYER_ID', 
+    'TEAM_ID', 
+    'GAME_ID',
+    'season_id', 
+    'GAME_DATE', 
+    'SEASON', 
+    'SEASON_ID',
+    'PLAYER_NAME', 
+    'TEAM_ABBREVIATION', 
+    'TEAM_NAME',
+    'MATCHUP',
+    'WL',
+    'VIDEO_AVAILABLE',
+    'SCRAPED_AT',
+    'scraped_at'
+]
+
+# The value we are trying to predict
+TARGET_COL = 'FANTASY_PTS'
+
 # Default rulebook to use if none is specified
 DEFAULT_SCORING_SYSTEM = 'wnba_default'
 

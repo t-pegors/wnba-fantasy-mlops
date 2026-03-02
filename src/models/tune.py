@@ -40,14 +40,15 @@ def tune_hyperparameters():
     df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
     df = df.sort_values(by='GAME_DATE')
 
-    #3. Define Features (X) and Target (y)
-    # We only drop the metadata, build_features handled the rest
-    drop_cols = ['PLAYER_ID', 'GAME_DATE', 'SEASON', 'FANTASY_PTS']
+    ## Combined list of metadata to drop + the target itself
+    to_drop = config.DROPPED_FEATURES + [config.TARGET_COL]
     
-    # Drop string columns and target, keep only features the model should see
-    drop_cols = [col for col in drop_cols if col in df.columns]
-    X = df.drop(columns=drop_cols).select_dtypes(include=['number'])
-    y = df['FANTASY_PTS']
+    # Final safety check: only drop columns that actually exist in this dataframe
+    actual_drops = [c for c in to_drop if c in df.columns]
+
+    X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
+    y = df[config.TARGET_COL]
+    
 
     # Ensure all features are floats to silence MLflow integer warnings
     X = X.astype('float64')
@@ -113,7 +114,7 @@ def tune_hyperparameters():
             
             # log signatures and models
             signature = infer_signature(X_train, preds)
-            mlflow.xgboost.log_model(model, "model", signature=signature)
+            mlflow.xgboost.log_model(model, name="model", signature=signature)
             mlflow.set_tag("features_used", ", ".join(X_train.columns))
 
             # Track the reigning champion locally

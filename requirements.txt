@@ -12,6 +12,7 @@ pyyaml
 mlflow
 python-dotenv
 xgboost
+dagshub
 
 # --- Entity Resolution ---
 thefuzz

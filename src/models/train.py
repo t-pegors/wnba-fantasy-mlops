@@ -7,6 +7,8 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 import mlflow
 from mlflow.models.signature import infer_signature
 from dotenv import load_dotenv
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="mlflow")
 
 # Path magic
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -42,16 +44,18 @@ def train_model():
     # Define Features (X) and Target (y)
     target_col = 'FANTASY_PTS'
     
-    # Only drop the metadata, build_features handled the rest
-    drop_cols = ['PLAYER_ID', 'GAME_DATE', 'SEASON', 'FANTASY_PTS']
+    ## Combined list of metadata to drop + the target itself
+    to_drop = config.DROPPED_FEATURES + [config.TARGET_COL]
     
-    # Ensure all drop columns actually exist in the dataframe before dropping
-    drop_cols = [col for col in drop_cols if col in df.columns]
-    X = df.drop(columns=drop_cols)
-    y = df[target_col]
+    # Final safety check: only drop columns that actually exist in this dataframe
+    actual_drops = [c for c in to_drop if c in df.columns]
+
+    X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
+    y = df[config.TARGET_COL]
 
     # FAIL-SAFE: Force X to only keep numeric columns (integers and floats)
     X = X.select_dtypes(include=['number'])
+    X = X.astype('float64')
 
     # 4. Chronological Train-Test Split (80/20)
     # We don't use random split in sports, otherwise we'd predict yesterday's game using tomorrow's data!
@@ -100,7 +104,7 @@ def train_model():
         
         # Save the feature signatures to DagsHub
         signature = infer_signature(X_train, predictions)
-        mlflow.xgboost.log_model(model, "model", signature=signature)
+        mlflow.xgboost.log_model(model, name="model", signature=signature)
         
         # Add a text tag so you can quickly read the features in the UI
         mlflow.set_tag("features_used", ", ".join(X_train.columns))

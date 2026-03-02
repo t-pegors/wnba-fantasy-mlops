@@ -78,24 +78,39 @@ def engineer_features():
         lambda x: x.expanding().mean().shift(1)
     )
 
-    # E. Current Team Standing (Rolling Win Percentage)
-    print("📈 Calculating chronological team standings...")
+    # ==========================================
+    # E. Team Standings & Matchup Differential
+    # ==========================================
+    print("📈 Calculating chronological team standings and opponent strength...")
     
-    # 1. Isolate unique team games to avoid player-row duplication skewing the math
+    # 1. Extract Opponent Abbreviation from MATCHUP (e.g., "PHO vs. LVA" -> "LVA")
+    df['OPP_ABBREVIATION'] = df['MATCHUP'].str.split(' ').str[-1]
+
+    # 2. Build a clean, chronological table of every team's games
     team_games = df[['TEAM_ABBREVIATION', 'GAME_DATE', 'WL', 'SEASON']].drop_duplicates().sort_values(by=['TEAM_ABBREVIATION', 'GAME_DATE'])
     
-    # 2. Convert 'W'/'L' text to 1/0 integers for math
+    # Convert 'W'/'L' to 1/0
     team_games['WIN_FLAG'] = np.where(team_games['WL'] == 'W', 1, 0)
     
-    # 3. Calculate expanding season win percentage (MUST shift by 1 to prevent target leakage)
+    # Calculate rolling win percentage (MUST shift by 1 to prevent target leakage)
     team_games['TEAM_WIN_PCT'] = team_games.groupby(['TEAM_ABBREVIATION', 'SEASON'])['WIN_FLAG'].transform(
         lambda x: x.expanding().mean().shift(1)
-    ).fillna(0.00) # Give them a 0.00 win pct for the very first game of the season
+    ).fillna(0.00) # Give them 0.00 for the first game of the season
     
-    # 4. Merge this new feature back into our main Golden Table
+    # 3. Merge the Player's Team Win PCT back into the main dataframe
     df = df.merge(team_games[['TEAM_ABBREVIATION', 'GAME_DATE', 'TEAM_WIN_PCT']], 
                   on=['TEAM_ABBREVIATION', 'GAME_DATE'], 
                   how='left')
+                  
+    # 4. Merge the Opponent's Team Win PCT into the main dataframe
+    opp_games = team_games[['TEAM_ABBREVIATION', 'GAME_DATE', 'TEAM_WIN_PCT']].rename(
+        columns={'TEAM_ABBREVIATION': 'OPP_ABBREVIATION', 'TEAM_WIN_PCT': 'OPP_WIN_PCT'}
+    )
+    df = df.merge(opp_games, on=['OPP_ABBREVIATION', 'GAME_DATE'], how='left')
+
+    # 5. Calculate the Matchup Differential 
+    # Positive = Our team is better. Negative = Opponent is better. Zero = Evenly matched.
+    df['WIN_PCT_DIFF'] = df['TEAM_WIN_PCT'] - df['OPP_WIN_PCT']
     
     # 6. Drop rows with missing lag features (e.g., first game of the season)
     df = df.dropna(subset=[f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG', 'FPTS_SEASON_AVG'])
@@ -114,7 +129,7 @@ def engineer_features():
     ]
     
     # We drop metadata that has no mathematical value to the algorithm
-    useless_metadata = ['TEAM_ABBREVIATION', 'TEAM_NAME', 'MATCHUP', 'WL', 'VIDEO_AVAILABLE', 'scraped_at', 'SCRAPED_AT']
+    useless_metadata = ['TEAM_ABBREVIATION', 'TEAM_NAME', 'MATCHUP', 'WL', 'VIDEO_AVAILABLE', 'scraped_at', 'SCRAPED_AT', 'OPP_ABBREVIATION']
     
     cols_to_drop = leaky_box_score_stats + useless_metadata
     
