@@ -132,21 +132,13 @@ def engineer_features():
     leaky_box_score_stats = [
         'PTS', 'REB', 'AST', 'STL', 'BLK', 'TOV', 'FGM', 'FGA', 'FG_PCT', 
         'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'PF', 
-        'PLUS_MINUS', 'MIN'
+        'PLUS_MINUS', 'MIN', 'MATCHUP', 'WL' # Added MATCHUP and WL as they are no longer needed
     ]
     
-    cols_to_drop = list(set(leaky_box_score_stats + config.DROPPED_FEATURES))
-    
-    # Safely drop only the columns that actually exist in the dataframe
-    cols_to_drop = [col for col in cols_to_drop if col in df.columns]
-    df = df.drop(columns=cols_to_drop)
-
-    # keep these
-    keep_list = ['WIN_PCT_DIFF', 'OPP_WIN_PCT', 'TEAM_WIN_PCT', 'FANTASY_PTS', 'PLAYER_ID', 'GAME_DATE']
-    cols_to_drop = [c for c in cols_to_drop if c not in keep_list]
-
-    final_drop = [col for col in cols_to_drop if col in df.columns]
-    df = df.drop(columns=final_drop)
+    # Safely drop ONLY the leaky stats. 
+    # We explicitly do NOT drop config.META_COLUMNS here so they survive into the CSV.
+    actual_drops = [col for col in leaky_box_score_stats if col in df.columns]
+    df = df.drop(columns=actual_drops)
 
     # 8. Save the "Golden Table"
     output_path = config.PROCESSED_DATA_DIR / "training_features.csv"
