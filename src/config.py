@@ -52,6 +52,7 @@ DROPPED_FEATURES = [
     'SEASON_ID',
     'PLAYER_NAME', 
     'TEAM_ABBREVIATION', 
+    'OPP_ABBREVIATION',
     'TEAM_NAME',
     'MATCHUP',
     'WL',
@@ -85,3 +86,15 @@ def load_scoring_system(system_name=DEFAULT_SCORING_SYSTEM):
         
     print(f"Loaded Scoring System: {config_data['name']}")
     return config_data['weights']
+
+# FANTASY GAME CONSTRAINTS (e.g., DraftKings WNBA Rules)
+SALARY_CAP = 50000
+ROSTER_SLOTS = {
+    'G': 2,    # Guards
+    'F': 3,    # Forwards
+    'UTIL': 1  # Utility (Any position)
+}
+TOTAL_SLOTS = 6
+
+# FILE PATHS
+SALARY_DATA_DIR = PROJECT_ROOT / "data" / "salaries"

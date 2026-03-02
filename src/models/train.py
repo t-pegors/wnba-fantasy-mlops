@@ -37,15 +37,16 @@ def train_model():
     data_path = config.PROCESSED_DATA_DIR / "training_features.csv"
     df = pd.read_csv(data_path)
     
-    # Sort chronologically to match our baseline validation strategy
-    df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
-    df = df.sort_values(by='GAME_DATE')
-    
     # Define Features (X) and Target (y)
     target_col = 'FANTASY_PTS'
     
     ## Combined list of metadata to drop + the target itself
+    # Use the centralized list from config, but only drop what's actually there
     to_drop = config.DROPPED_FEATURES + [config.TARGET_COL]
+    actual_drops = [c for c in to_drop if c in df.columns]
+    
+    X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
+    y = df[config.TARGET_COL]
     
     # Final safety check: only drop columns that actually exist in this dataframe
     actual_drops = [c for c in to_drop if c in df.columns]

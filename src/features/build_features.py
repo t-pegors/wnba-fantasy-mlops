@@ -25,7 +25,7 @@ def calc_fp(row, w):
 def engineer_features():
     print("🚀 Starting WNBA Feature Engineering Pipeline...")
 
-    # 1. Load ALL Available Historical Data
+    # Load ALL Available Historical Data
     search_pattern = str(config.RAW_DATA_DIR / "wnba_*_gamelogs.csv")
     all_files = glob.glob(search_pattern)
     
@@ -36,33 +36,33 @@ def engineer_features():
     df_list = [pd.read_csv(file) for file in all_files]
     df = pd.concat(df_list, ignore_index=True)
 
-    # 2. Apply Dynamic Scoring Rules (The Target)
+    # Apply Dynamic Scoring Rules (The Target)
     scoring_weights = config.load_scoring_system(config.DEFAULT_SCORING_SYSTEM)
     df['FANTASY_PTS'] = df.apply(lambda row: calc_fp(row, scoring_weights), axis=1)
 
-    # 3. Filter the Noise (Min Games Threshold)
+    # Filter players that don't exceed the minimum game threshold
     game_counts = df['PLAYER_ID'].value_counts()
     valid_players = game_counts[game_counts >= config.MIN_GAMES_THRESHOLD].index
     df = df[df['PLAYER_ID'].isin(valid_players)].copy()
 
-    # 4. Sort chronologically to prevent data leakage
+    # Sort chronologically to prevent data leakage
     df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
     df = df.sort_values(by=['PLAYER_ID', 'GAME_DATE'])
 
     # ==========================================
-    # 5. FEATURE ENGINEERING BLOCK
+    # FEATURE ENGINEERING BLOCK
     # ==========================================
     print("🧠 Engineering advanced predictive features...")
 
-    # A. Venue Features (Home vs Away)
+    # Venue Features (Home vs Away)
     # If the matchup contains ' vs. ', they are the home team. If '@', away.
     df['IS_HOME'] = np.where(df['MATCHUP'].str.contains(' vs. '), 1, 0)
 
-    # B. Rest & Fatigue Features
+    # Rest & Fatigue Features
     df['DAYS_REST'] = df.groupby('PLAYER_ID')['GAME_DATE'].diff().dt.days.fillna(7)
     df['IS_BACK_TO_BACK'] = np.where(df['DAYS_REST'] <= 1, 1, 0)
 
-    # C. Rolling Averages (Short and Long Term Form)
+    # Rolling Averages (Short and Long Term Form)
     # MUST use .shift(1) so today's prediction only uses past data
     df[f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG'] = df.groupby('PLAYER_ID')['FANTASY_PTS'].transform(
         lambda x: x.rolling(window=config.ROLLING_WINDOW_SHORT, min_periods=1).mean().shift(1)
@@ -79,16 +79,23 @@ def engineer_features():
     )
 
     # ==========================================
-    # E. Team Standings & Matchup Differential
+    # Team Standings & Matchup Differential
     # ==========================================
     print("📈 Calculating chronological team standings and opponent strength...")
     
-    # 1. Extract Opponent Abbreviation from MATCHUP (e.g., "PHO vs. LVA" -> "LVA")
+    # Ensure main DF date is datetime
+    df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
+
+    # Extract Opponent Abbreviation from MATCHUP (e.g., "PHO vs. LVA" -> "LVA")
     df['OPP_ABBREVIATION'] = df['MATCHUP'].str.split(' ').str[-1]
 
-    # 2. Build a clean, chronological table of every team's games
-    team_games = df[['TEAM_ABBREVIATION', 'GAME_DATE', 'WL', 'SEASON']].drop_duplicates().sort_values(by=['TEAM_ABBREVIATION', 'GAME_DATE'])
-    
+    # Build a clean, chronological table of every team's games
+    team_games = df[['TEAM_ABBREVIATION', 'GAME_DATE', 'WL', 'SEASON']].drop_duplicates().copy()
+    team_games = team_games.sort_values(by=['TEAM_ABBREVIATION', 'GAME_DATE'])
+
+    # Double-check the date format on the new dataframe
+    team_games['GAME_DATE'] = pd.to_datetime(team_games['GAME_DATE'])
+
     # Convert 'W'/'L' to 1/0
     team_games['WIN_FLAG'] = np.where(team_games['WL'] == 'W', 1, 0)
     
@@ -97,26 +104,26 @@ def engineer_features():
         lambda x: x.expanding().mean().shift(1)
     ).fillna(0.00) # Give them 0.00 for the first game of the season
     
-    # 3. Merge the Player's Team Win PCT back into the main dataframe
+    # Merge the Player's Team Win PCT back into the main dataframe
     df = df.merge(team_games[['TEAM_ABBREVIATION', 'GAME_DATE', 'TEAM_WIN_PCT']], 
                   on=['TEAM_ABBREVIATION', 'GAME_DATE'], 
                   how='left')
                   
-    # 4. Merge the Opponent's Team Win PCT into the main dataframe
+    # Merge the Opponent's Team Win PCT into the main dataframe
     opp_games = team_games[['TEAM_ABBREVIATION', 'GAME_DATE', 'TEAM_WIN_PCT']].rename(
         columns={'TEAM_ABBREVIATION': 'OPP_ABBREVIATION', 'TEAM_WIN_PCT': 'OPP_WIN_PCT'}
     )
     df = df.merge(opp_games, on=['OPP_ABBREVIATION', 'GAME_DATE'], how='left')
 
-    # 5. Calculate the Matchup Differential 
+    # Calculate the Matchup Differential 
     # Positive = Our team is better. Negative = Opponent is better. Zero = Evenly matched.
     df['WIN_PCT_DIFF'] = df['TEAM_WIN_PCT'] - df['OPP_WIN_PCT']
     
-    # 6. Drop rows with missing lag features (e.g., first game of the season)
+    # Drop rows with missing lag features (e.g., first game of the season)
     df = df.dropna(subset=[f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG', 'FPTS_SEASON_AVG'])
 
     # ==========================================
-    # 7. THE CLEAN-UP PHASE (Dropping the Noise)
+    # CLEAN-UP PHASE (Dropping the Noise)
     # ==========================================
     print("🧹 Cleaning up raw stats and non-predictive columns...")
     
@@ -128,14 +135,18 @@ def engineer_features():
         'PLUS_MINUS', 'MIN'
     ]
     
-    # We drop metadata that has no mathematical value to the algorithm
-    useless_metadata = ['TEAM_ABBREVIATION', 'TEAM_NAME', 'MATCHUP', 'WL', 'VIDEO_AVAILABLE', 'scraped_at', 'SCRAPED_AT', 'OPP_ABBREVIATION']
-    
-    cols_to_drop = leaky_box_score_stats + useless_metadata
+    cols_to_drop = list(set(leaky_box_score_stats + config.DROPPED_FEATURES))
     
     # Safely drop only the columns that actually exist in the dataframe
     cols_to_drop = [col for col in cols_to_drop if col in df.columns]
     df = df.drop(columns=cols_to_drop)
+
+    # keep these
+    keep_list = ['WIN_PCT_DIFF', 'OPP_WIN_PCT', 'TEAM_WIN_PCT', 'FANTASY_PTS', 'PLAYER_ID', 'GAME_DATE']
+    cols_to_drop = [c for c in cols_to_drop if c not in keep_list]
+
+    final_drop = [col for col in cols_to_drop if col in df.columns]
+    df = df.drop(columns=final_drop)
 
     # 8. Save the "Golden Table"
     output_path = config.PROCESSED_DATA_DIR / "training_features.csv"

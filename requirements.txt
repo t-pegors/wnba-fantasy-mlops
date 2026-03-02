@@ -22,3 +22,6 @@ python-Levenshtein
 jupyter
 matplotlib
 seaborn
+
+# Linear Programming
+pulp

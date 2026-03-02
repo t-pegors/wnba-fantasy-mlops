@@ -36,19 +36,14 @@ def tune_hyperparameters():
     data_path = config.PROCESSED_DATA_DIR / "training_features.csv"
     df = pd.read_csv(data_path)
     
-    # CRITICAL: Sort chronologically to perfectly match the baseline test set
-    df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
-    df = df.sort_values(by='GAME_DATE')
-
     ## Combined list of metadata to drop + the target itself
     to_drop = config.DROPPED_FEATURES + [config.TARGET_COL]
-    
+
     # Final safety check: only drop columns that actually exist in this dataframe
     actual_drops = [c for c in to_drop if c in df.columns]
 
     X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
     y = df[config.TARGET_COL]
-    
 
     # Ensure all features are floats to silence MLflow integer warnings
     X = X.astype('float64')
@@ -93,22 +88,30 @@ def tune_hyperparameters():
             mlflow.log_params(params)
 
             # Train the specific configuration
-            model = xgb.XGBRegressor(**params)
-            model.fit(X_train, y_train)
+            # Set the 'patience' in the constructor
+            model = xgb.XGBRegressor(
+                **params,
+                early_stopping_rounds=10  # Stop if no improvement for 10 straight rounds
+            )
+
+            # Pass the validation data in the .fit() call
+            model.fit(
+                X_train, y_train,
+                eval_set=[(X_test, y_test)], # The "watch list"
+                verbose=False                 # Keeps the terminal clean
+            )
             
             # Predict & Evaluate
             preds = model.predict(X_test)
 
-            duration = time.time() - start_time
-            mlflow.log_metric("duration_seconds", duration) # Log to DagsHub
-            
-            print(f"✅ Run {i+1} complete in {duration:.2f}s | MAE: {mae:.4f}")
-
+            # Calculate
             mae = mean_absolute_error(y_test, preds)
             rmse = np.sqrt(mean_squared_error(y_test, preds))
-            
-            # Log the results
-            mlflow.log_metric("test_mae", mae)
+            duration = time.time() - start_time
+
+            # Print and Log
+            print(f"✅ Run {i+1} complete in {duration:.2f}s | MAE: {mae:.4f}")
+            mlflow.log_metric("duration_seconds", duration)
             mlflow.log_metric("test_rmse", rmse)
             mlflow.set_tag("model_type", "xgboost_tune")
             
