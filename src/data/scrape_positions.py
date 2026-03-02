@@ -1,64 +1,83 @@
 import requests
-from bs4 import BeautifulSoup
 import pandas as pd
-import re
-from src import config
 import os
+import sys
+import re
 
-def scrape_full_player_data():
-    print("🚀 Initiating Deep Player Metadata Scrape...")
-    url = "https://www.wnba.com/players"
+# Path magic for 'src'
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+from src import config
+
+def scrape_espn_vault():
+    print("🚀 Initiating Deep ESPN API Vault Scrape (v2.1)...")
     
+    # The 'enable=roster' flag is the secret sauce here
+    base_url = "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams?enable=roster"
     headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
     
-    # Selecting the player containers
-    player_cards = soup.select('.PlayerCard_pc__2_vS5') 
-    all_player_data = []
-
-    for card in player_cards:
-        try:
-            name = card.select_one('.PlayerCard_pcName__S3o_8').text.strip()
-            # The bio line usually looks like: "#22 • Guard • Indiana Fever • Height 6-0 • Exp 1 yr"
-            bio_text = card.select_one('.PlayerCard_pcBio__3_vS5').text.strip()
+    try:
+        response = requests.get(base_url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        
+        # ESPN's JSON structure can be deeply nested
+        teams_list = data.get('sports', [{}])[0].get('leagues', [{}])[0].get('teams', [])
+        
+        all_players = []
+        
+        for entry in teams_list:
+            team_info = entry.get('team', {})
+            team_name = team_info.get('displayName')
+            # Extract athletes directly from the 'roster' key enabled by our query param
+            roster = team_info.get('athlete', team_info.get('athletes', []))
             
-            # Use Regex to extract specific patterns
-            height_match = re.search(r'Height (\d-\d+)', bio_text)
-            exp_match = re.search(r'Exp (\d+|Rookie)', bio_text)
-            pos_match = re.search(r'• ([a-zA-Z-]+) •', bio_text)
-            
-            # Convert Height (6-2) to total inches (74)
-            height_inches = None
-            if height_match:
-                h = height_match.group(1).split('-')
-                height_inches = int(h[0]) * 12 + int(h[1])
-            
-            # Convert Experience to an integer
-            exp_years = 0
-            if exp_match:
-                val = exp_match.group(1)
-                exp_years = 0 if val == 'Rookie' else int(val)
+            # If the roster is a dict (sometimes happens in v2), get the list
+            if isinstance(roster, dict):
+                roster = roster.get('items', [])
 
-            all_player_data.append({
-                'PLAYER_NAME': name,
-                'PRIMARY_POS': pos_match.group(1)[0] if pos_match else 'U',
-                'HEIGHT_INCHES': height_inches,
-                'EXP_YEARS': exp_years,
-                'BIO_STRING': bio_text
-            })
-        except Exception as e:
-            continue
+            print(f"🏀 Processing {len(roster)} athletes for {team_name}...")
+            
+            for player in roster:
+                # Height parsing (e.g., "6' 4\"")
+                height_str = player.get('displayHeight', '0\' 0"')
+                total_inches = 0
+                try:
+                    parts = re.findall(r'\d+', height_str)
+                    if len(parts) >= 2:
+                        total_inches = (int(parts[0]) * 12) + int(parts[1])
+                except:
+                    total_inches = None
 
-    df = pd.DataFrame(all_player_data)
-    
-    # Save to our metadata store
-    output_path = config.DATA_DIR / "metadata" / "player_deep_stats.csv"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    df.to_csv(output_path, index=False)
-    
-    print(f"✅ Deep Metadata Scrape Complete. Captured {len(df)} players.")
-    return df
+                all_players.append({
+                    'PLAYER_NAME': player.get('fullName'),
+                    'ESPN_ID': player.get('id'),
+                    'POSITION': player.get('position', {}).get('abbreviation', 'U'),
+                    'TEAM_NAME': team_name,
+                    'HEIGHT_INCHES': total_inches,
+                    'WEIGHT_LBS': player.get('weight'),
+                    'EXP_YEARS': player.get('experience', {}).get('years', 0),
+                    'COLLEGE': player.get('birthPlace', {}).get('city', 'Unknown'),
+                    'JERSEY': player.get('jersey'),
+                    'SCRAPED_AT': pd.Timestamp.now()
+                })
+
+        df = pd.DataFrame(all_players)
+        
+        if not df.empty:
+            output_path = config.DATA_DIR / "metadata" / "player_vault.csv"
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            df.to_csv(output_path, index=False)
+            print(f"✅ SUCCESS! Archived {len(df)} players to {output_path}")
+        else:
+            print("❌ Still 0 players. The API might be in 'Offseason' mode.")
+            
+        return df
+
+    except Exception as e:
+        print(f"❌ Scrape failed: {e}")
 
 if __name__ == "__main__":
-    scrape_full_player_data()
+    scrape_espn_vault()
