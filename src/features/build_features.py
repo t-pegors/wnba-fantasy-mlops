@@ -5,15 +5,23 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+
 # Path magic to import from src
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
 from src import config
+from src.utils.data_utils import load_scoring_system
+from src.utils.data_utils import normalize_name
+
+#############################################################################################
 
 def calc_fp(row, w):
-    """Calculates Fantasy Points dynamically based on loaded weights."""
+    """
+    Calculates Fantasy Points dynamically based on loaded weights.
+    To change scoring system, add system to config/scoring/ and update in config.py
+    """
     return (row['PTS'] * w['PTS']) + \
            (row['REB'] * w['REB']) + \
            (row['AST'] * w['AST']) + \
@@ -25,7 +33,10 @@ def calc_fp(row, w):
 def engineer_features():
     print("🚀 Starting WNBA Feature Engineering Pipeline...")
 
-    # Load ALL Available Historical Data
+    #############################################
+    ## Load and Merge All Historical WNBA Data ##
+    #############################################
+    
     search_pattern = str(config.RAW_DATA_DIR / "wnba_*_gamelogs.csv")
     all_files = glob.glob(search_pattern)
     
@@ -36,8 +47,8 @@ def engineer_features():
     df_list = [pd.read_csv(file) for file in all_files]
     df = pd.concat(df_list, ignore_index=True)
 
-    # Apply Dynamic Scoring Rules (The Target)
-    scoring_weights = config.load_scoring_system(config.DEFAULT_SCORING_SYSTEM)
+    # Apply Scoring (Target)
+    scoring_weights = load_scoring_system(config.DEFAULT_SCORING_SYSTEM)
     df['FANTASY_PTS'] = df.apply(lambda row: calc_fp(row, scoring_weights), axis=1)
 
     # Filter players that don't exceed the minimum game threshold
@@ -49,10 +60,11 @@ def engineer_features():
     df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
     df = df.sort_values(by=['PLAYER_ID', 'GAME_DATE'])
 
-    # ==========================================
-    # FEATURE ENGINEERING BLOCK
-    # ==========================================
-    print("🧠 Engineering advanced predictive features...")
+    #####################################################
+    ### Features: IS_HOME, DAYS_REST, IS_BACK_TO_BACK ###
+    #####################################################
+
+    print("🧠 Engineering predictive features...")
 
     # Venue Features (Home vs Away)
     # If the matchup contains ' vs. ', they are the home team. If '@', away.
@@ -62,29 +74,121 @@ def engineer_features():
     df['DAYS_REST'] = df.groupby('PLAYER_ID')['GAME_DATE'].diff().dt.days.fillna(7)
     df['IS_BACK_TO_BACK'] = np.where(df['DAYS_REST'] <= 1, 1, 0)
 
-    # Rolling Averages (Short and Long Term Form)
-    # MUST use .shift(1) so today's prediction only uses past data
+    ################################################################
+    ### Features: FPTS_[short]_AVG, FPTS_[long]_AVG, FPTS_SEASON_AVG
+    ################################################################
+
+    # Rolling Average (Short)
     df[f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG'] = df.groupby('PLAYER_ID')['FANTASY_PTS'].transform(
         lambda x: x.rolling(window=config.ROLLING_WINDOW_SHORT, min_periods=1).mean().shift(1)
     )
     
+    # Rolling Average (Long)
     df[f'FPTS_{config.ROLLING_WINDOW_LONG}G_AVG'] = df.groupby('PLAYER_ID')['FANTASY_PTS'].transform(
         lambda x: x.rolling(window=config.ROLLING_WINDOW_LONG, min_periods=1).mean().shift(1)
     )
 
-    # D. Season-to-Date Anchor (Our best baseline!)
+    print("🌉 Building cross-season Bayesian anchors...")
+    
+    # Extract the Season Year before grouping
     df['SEASON'] = df['GAME_DATE'].dt.year
-    df['FPTS_SEASON_AVG'] = df.groupby(['PLAYER_ID', 'SEASON'])['FANTASY_PTS'].transform(
+
+    # Chronological Game Index (1 to ~40 for each season)
+    df['SEASON_GAME_NUM'] = df.groupby(['PLAYER_ID', 'SEASON']).cumcount() + 1
+
+    # Extract Prior Season Average
+    # Calculate the final average for each player in each season, then shift it forward a year
+    season_summaries = df.groupby(['PLAYER_ID', 'SEASON'])['FANTASY_PTS'].mean().reset_index()
+    # Explicitly sort chronologically to ensure .shift(1) pulls the correct previous year
+    season_summaries = season_summaries.sort_values(by=['PLAYER_ID', 'SEASON'])
+    season_summaries['PRIOR_SEASON_AVG'] = season_summaries.groupby('PLAYER_ID')['FANTASY_PTS'].shift(1)
+    
+    # Merge the prior year's average back into the main timeline
+    df = df.merge(season_summaries[['PLAYER_ID', 'SEASON', 'PRIOR_SEASON_AVG']], 
+                  on=['PLAYER_ID', 'SEASON'], 
+                  how='left')
+
+    print("🧬 Injecting Rookie Pedigree Proxies...")
+    
+    # 1. Load the OSINT databases
+    ncaa_path = config.DATA_DIR / "metadata" / "rookie_proxies.csv"
+    intl_path = config.DATA_DIR / "metadata" / "intl_proxies.csv"
+    
+    proxy_dfs = []
+    if ncaa_path.exists():
+        proxy_dfs.append(pd.read_csv(ncaa_path)[['match_name', 'WNBA_ROOKIE_PROXY']])
+    if intl_path.exists():
+        proxy_dfs.append(pd.read_csv(intl_path)[['match_name', 'WNBA_ROOKIE_PROXY']])
+        
+    if proxy_dfs:
+        # Combine NCAA and INTL proxies
+        all_proxies = pd.concat(proxy_dfs, ignore_index=True)
+        
+        # Merge them into the main timeline
+        df['match_name'] = df['PLAYER_NAME'].apply(normalize_name)
+        df = df.merge(all_proxies, on='match_name', how='left')
+        
+        # --- 🚨 MISSING DATA AUDIT 🚨 ---
+        # Find players who have NO historical data AND NO proxy data
+        max_season = df['SEASON'].max()
+        current_season_mask = df['SEASON'] == max_season
+        unmapped_mask = df['PRIOR_SEASON_AVG'].isna() & df['WNBA_ROOKIE_PROXY'].isna() & current_season_mask
+        
+        unmapped_players = df[unmapped_mask]['PLAYER_NAME'].unique()
+        
+        if len(unmapped_players) > 0:
+            print(f"   ⚠️ WARNING: {len(unmapped_players)} players have NO historical or proxy data!")
+            print("   They are defaulting to a flat 12.0. Consider adding them to your OSINT targets:")
+            
+            # Print up to 10 names so we don't spam the terminal if there are dozens
+            for p in unmapped_players[:10]:
+                print(f"      - {p}")
+            if len(unmapped_players) > 10:
+                print(f"      ...and {len(unmapped_players) - 10} more.")
+        # ------------------------------------
+        
+        # Cascade Fill: Try Historical -> Try OSINT Proxy -> Fallback to 12.0
+        df['PRIOR_SEASON_AVG'] = df['PRIOR_SEASON_AVG'].fillna(df['WNBA_ROOKIE_PROXY']).fillna(12.0)
+        
+        # Clean up temporary columns
+        df = df.drop(columns=['match_name', 'WNBA_ROOKIE_PROXY'])
+    else:
+        # Fallback if the CSVs are completely missing
+        print("   ⚠️ WARNING: No proxy CSVs found in metadata! All missing players defaulting to 12.0.")
+        df['PRIOR_SEASON_AVG'] = df['PRIOR_SEASON_AVG'].fillna(12.0)
+
+    # Season-to-Date Average (Bayesian Blend for Early Season)
+    # - For the first set of games (before all rolling windows can be calculated), data is 
+    #   wrapped in from the previous season
+    # - Any missing rolling window averages are replaced with this blended average
+    # Get the raw expanding mean of the CURRENT season (excluding today)
+    df['CURRENT_SEASON_AVG'] = df.groupby(['PLAYER_ID', 'SEASON'])['FANTASY_PTS'].transform(
         lambda x: x.expanding().mean().shift(1)
     )
 
-    # ==========================================
-    # Team Standings & Matchup Differential
-    # ==========================================
-    print("📈 Calculating chronological team standings and opponent strength...")
+    # Calculate the "Trust Weight" (0.0 on Game 1, 1.0 by Game 11)
+    # ROLLING_WINDOW_LONG is the "burn-in" period.
+    df['NEW_SEASON_WEIGHT'] = ((df['SEASON_GAME_NUM'] - 1) / config.ROLLING_WINDOW_LONG).clip(upper=1.0)
+
+    # Fill Game 1's NaN with 0 temporarily so the math doesn't break (weight is 0 anyway)
+    df['CURRENT_SEASON_AVG'] = df['CURRENT_SEASON_AVG'].fillna(0)
+
+    # The Bayesian Blend: (Current * Weight) + (Prior * Inverse Weight)
+    df['FPTS_SEASON_AVG'] = (df['CURRENT_SEASON_AVG'] * df['NEW_SEASON_WEIGHT']) + \
+                            (df['PRIOR_SEASON_AVG'] * (1 - df['NEW_SEASON_WEIGHT']))
     
-    # Ensure main DF date is datetime
-    df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
+    # Replace missing short-term/long-term rolling averages with Blended Average (i.e. don't drop early games)
+    short_col = f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG'
+    long_col = f'FPTS_{config.ROLLING_WINDOW_LONG}G_AVG'
+
+    df[short_col] = df[short_col].fillna(df['FPTS_SEASON_AVG'])
+    df[long_col] = df[long_col].fillna(df['FPTS_SEASON_AVG'])
+
+    #########################################################
+    ### Features: TEAM_WIN_PCT, OPP_WIN_PCT, WIN_PCT_DIFF ###
+    #########################################################
+
+    print("📈 Calculating chronological team standings and opponent strength...")
 
     # Extract Opponent Abbreviation from MATCHUP (e.g., "PHO vs. LVA" -> "LVA")
     df['OPP_ABBREVIATION'] = df['MATCHUP'].str.split(' ').str[-1]
@@ -99,10 +203,29 @@ def engineer_features():
     # Convert 'W'/'L' to 1/0
     team_games['WIN_FLAG'] = np.where(team_games['WL'] == 'W', 1, 0)
     
-    # Calculate rolling win percentage (MUST shift by 1 to prevent target leakage)
-    team_games['TEAM_WIN_PCT'] = team_games.groupby(['TEAM_ABBREVIATION', 'SEASON'])['WIN_FLAG'].transform(
+    # Calculate current season rolling win percentage
+    team_games['CURRENT_WIN_PCT'] = team_games.groupby(['TEAM_ABBREVIATION', 'SEASON'])['WIN_FLAG'].transform(
         lambda x: x.expanding().mean().shift(1)
-    ).fillna(0.00) # Give them 0.00 for the first game of the season
+    )
+    
+    # Extract Prior Season Final Win Percentage
+    team_summaries = team_games.groupby(['TEAM_ABBREVIATION', 'SEASON'])['WIN_FLAG'].mean().reset_index()
+    team_summaries = team_summaries.sort_values(by=['TEAM_ABBREVIATION', 'SEASON'])
+    team_summaries['PRIOR_WIN_PCT'] = team_summaries.groupby('TEAM_ABBREVIATION')['WIN_FLAG'].shift(1).fillna(0.500) # 0.500 for new expansion teams
+    
+    # Merge the prior win percentage back
+    team_games = team_games.merge(team_summaries[['TEAM_ABBREVIATION', 'SEASON', 'PRIOR_WIN_PCT']], 
+                                  on=['TEAM_ABBREVIATION', 'SEASON'], how='left')
+    
+    # Calculate Team Game Number to apply Bayesian Weight
+    team_games['TEAM_GAME_NUM'] = team_games.groupby(['TEAM_ABBREVIATION', 'SEASON']).cumcount() + 1
+    team_games['TEAM_WEIGHT'] = ((team_games['TEAM_GAME_NUM'] - 1) / config.ROLLING_WINDOW_LONG).clip(upper=1.0)
+    
+    team_games['CURRENT_WIN_PCT'] = team_games['CURRENT_WIN_PCT'].fillna(0)
+    
+    # The Team Bayesian Blend
+    team_games['TEAM_WIN_PCT'] = (team_games['CURRENT_WIN_PCT'] * team_games['TEAM_WEIGHT']) + \
+                                 (team_games['PRIOR_WIN_PCT'] * (1 - team_games['TEAM_WEIGHT']))
     
     # Merge the Player's Team Win PCT back into the main dataframe
     df = df.merge(team_games[['TEAM_ABBREVIATION', 'GAME_DATE', 'TEAM_WIN_PCT']], 
@@ -119,12 +242,12 @@ def engineer_features():
     # Positive = Our team is better. Negative = Opponent is better. Zero = Evenly matched.
     df['WIN_PCT_DIFF'] = df['TEAM_WIN_PCT'] - df['OPP_WIN_PCT']
     
-    # Drop rows with missing lag features (e.g., first game of the season)
-    df = df.dropna(subset=[f'FPTS_{config.ROLLING_WINDOW_SHORT}G_AVG', 'FPTS_SEASON_AVG'])
+    
 
-    # ==========================================
-    # CLEAN-UP PHASE (Dropping the Noise)
-    # ==========================================
+    ################### 
+    # Cleanup and Save
+    ################### 
+
     print("🧹 Cleaning up raw stats and non-predictive columns...")
     
     # We drop the raw stats because they happen DURING the game. 
@@ -132,7 +255,7 @@ def engineer_features():
     leaky_box_score_stats = [
         'PTS', 'REB', 'AST', 'STL', 'BLK', 'TOV', 'FGM', 'FGA', 'FG_PCT', 
         'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'PF', 
-        'PLUS_MINUS', 'MIN', 'MATCHUP', 'WL' # Added MATCHUP and WL as they are no longer needed
+        'PLUS_MINUS', 'MIN', 'MATCHUP', 'WL' 
     ]
     
     # Safely drop ONLY the leaky stats. 
@@ -140,7 +263,7 @@ def engineer_features():
     actual_drops = [col for col in leaky_box_score_stats if col in df.columns]
     df = df.drop(columns=actual_drops)
 
-    # 8. Save the "Golden Table"
+    # Save the "Golden Table"
     output_path = config.PROCESSED_DATA_DIR / "training_features.csv"
     os.makedirs(config.PROCESSED_DATA_DIR, exist_ok=True)
     df.to_csv(output_path, index=False)

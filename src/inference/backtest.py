@@ -29,12 +29,27 @@ def normalize_name(name):
     return name
 
 def normalize_position(pos):
-    """Converts WNBA API positions to DraftKings DFS slots (Centers become Forwards)."""
-    pos = str(pos).upper()
-    if pos == 'NAN' or pos == 'NONE':
-        return 'F' # Default unknown players to Forward to prevent pipeline crashes
-    if 'C' in pos:
-        pos = pos.replace('C', 'F')
+    """Converts WNBA API positions cleanly to DraftKings DFS slots."""
+    pos = str(pos).upper().strip()
+    
+    # 1. Handle missing data safely to prevent pipeline crashes
+    if pos in ['NAN', 'NONE', '']:
+        return 'FORWARD' 
+        
+    # 2. Exorcise the ghost from the old CSVs
+    pos = pos.replace('FENTER', 'FORWARD')
+        
+    # 3. Handle the full word FIRST before looking at single letters
+    pos = pos.replace('CENTER', 'FORWARD')
+    
+    # 4. Standardize the abbreviations mapping Centers to Forwards
+    if pos in ['C', 'F-C', 'C-F', 'F']:
+        return 'FORWARD'
+    elif pos == 'G':
+        return 'GUARD'
+        
+    # 5. Leave combo strings intact (e.g., "GUARD-FORWARD") so the optimizer 
+    # can trigger both the 'G' and 'F' eligibility checks!
     return pos
 
 # ==========================================

@@ -1,35 +1,50 @@
 import pulp
 import pandas as pd
-from src import config
 
-def solve_lineup(players_df):
+def generate_optimal_lineup(slate_df, salary_cap=50000):
     """
-    Optimizes a WNBA lineup with flexible Utility slot logic.
+    Takes a dataframe of players with 'Salary' and 'Predicted_Pts' and 
+    solves the Knapsack Problem for DraftKings WNBA constraints.
+    
+    Returns:
+        dict: Contains 'status', 'lineup_df', 'total_salary', 'total_points'
     """
-    prob = pulp.LpProblem("WNBA_Lineup_Optimization", pulp.LpMaximize)
+    # Defensive check
+    if 'Predicted_Pts' not in slate_df.columns or 'Salary' not in slate_df.columns:
+        return {"status": "Error: Missing required columns for optimization."}
+
+    # Initialize the PuLP Problem
+    prob = pulp.LpProblem("WNBA_DFS_Optimizer", pulp.LpMaximize)
     
-    # Decision Variables
-    player_vars = pulp.LpVariable.dicts("Players", players_df.index, cat='Binary')
+    # Create boolean variables for every player (1 if drafted, 0 if not)
+    player_vars = [pulp.LpVariable(f"player_{i}", cat="Binary") for i in range(len(slate_df))]
     
-    # Objective: Maximize Predicted Points
-    prob += pulp.lpSum([players_df.loc[i, 'predicted_pts'] * player_vars[i] for i in players_df.index])
+    # Objective: Maximize total predicted points
+    prob += pulp.lpSum(player_vars[i] * slate_df.iloc[i]['Predicted_Pts'] for i in range(len(slate_df)))
     
-    # Constraint 1: Salary Cap
-    prob += pulp.lpSum([players_df.loc[i, 'salary'] * player_vars[i] for i in players_df.index]) <= config.SALARY_CAP
+    # Constraint 1: Exactly 6 players drafted
+    prob += pulp.lpSum(player_vars) == 6
     
-    # Constraint 2: Total Roster Size (e.g., 6)
-    prob += pulp.lpSum([player_vars[i] for i in players_df.index]) == config.TOTAL_SLOTS
+    # Constraint 2: Total Salary <= Cap
+    prob += pulp.lpSum(player_vars[i] * slate_df.iloc[i]['Salary'] for i in range(len(slate_df))) <= salary_cap
     
-    # Constraint 3: Position Minimums
-    # We require at least the minimum, the 'Utility' will naturally be filled by the next best value
-    guards = players_df[players_df['position'] == 'G'].index
-    forwards = players_df[players_df['position'] == 'F'].index
-    
-    prob += pulp.lpSum([player_vars[i] for i in guards]) >= config.ROSTER_SLOTS['G']
-    prob += pulp.lpSum([player_vars[i] for i in forwards]) >= config.ROSTER_SLOTS['F']
+    # Constraint 3: Position minimums (DraftKings WNBA: 2G, 3F, 1 UTIL)
+    prob += pulp.lpSum(player_vars[i] for i in range(len(slate_df)) if 'G' in str(slate_df.iloc[i]['Position'])) >= 2
+    prob += pulp.lpSum(player_vars[i] for i in range(len(slate_df)) if 'F' in str(slate_df.iloc[i]['Position'])) >= 3
     
     # Solve silently
     prob.solve(pulp.PULP_CBC_CMD(msg=0))
     
-    chosen_indices = [i for i in players_df.index if player_vars[i].varValue == 1]
-    return players_df.loc[chosen_indices]
+    # Evaluate Results
+    if pulp.LpStatus[prob.status] == 'Optimal':
+        selected_indices = [i for i in range(len(slate_df)) if player_vars[i].varValue == 1.0]
+        optimal_lineup = slate_df.iloc[selected_indices].copy()
+        
+        return {
+            "status": "Optimal",
+            "lineup_df": optimal_lineup,
+            "total_salary": optimal_lineup['Salary'].sum(),
+            "total_points": optimal_lineup['Predicted_Pts'].sum()
+        }
+    else:
+        return {"status": "Infeasible: Could not find valid lineup under cap constraints."}

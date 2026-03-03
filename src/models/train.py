@@ -47,12 +47,6 @@ def train_model():
     
     X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
     y = df[config.TARGET_COL]
-    
-    # Final safety check: only drop columns that actually exist in this dataframe
-    actual_drops = [c for c in to_drop if c in df.columns]
-
-    X = df.drop(columns=actual_drops).select_dtypes(include=['number'])
-    y = df[config.TARGET_COL]
 
     # FAIL-SAFE: Force X to only keep numeric columns (integers and floats)
     X = X.select_dtypes(include=['number'])

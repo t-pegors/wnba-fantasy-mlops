@@ -33,7 +33,13 @@ MERGE_WNBA_SOURCE = RAW_DATA_DIR / "wnba_2025_gamelogs.csv"
 MERGE_UNRIVALED_SOURCE = PROCESSED_DATA_DIR / "unrivaled_2025_processed.csv"
 PLAYER_MAP_OUTPUT = PROCESSED_DATA_DIR / "player_mapping.csv"
 
-# --- MODELING & FEATURE ENGINEERING PARAMETERS ---
+###################################################
+# FEATURE ENGINEERING PARAMETERS
+###################################################
+
+# Scoring rulebook (see config/scoring/)
+DEFAULT_SCORING_SYSTEM = 'wnba_default'
+
 # Minimum number of games a player must play to be included
 MIN_GAMES_THRESHOLD = 10 
 
@@ -42,8 +48,14 @@ ROLLING_WINDOW_SHORT = 3
 ROLLING_WINDOW_LONG = 10
 
 # Columns that should NEVER be seen by the model (Metadata/Leakage)
-META_FEATURES = ['GAME_DATE', 'PLAYER_NAME', 'TEAM_ABBREVIATION', 'SEASON']  #need for testing/audit
-DROPPED_FEATURES = META_FEATURES + [
+META_FEATURES = [ # needed for testing/audit (but will be dropped before training)
+    'GAME_DATE', 'PLAYER_NAME', 'TEAM_ABBREVIATION', 'SEASON'
+]  
+BAYESIAN_HELPERS = [
+    'SEASON_GAME_NUM', 'PRIOR_SEASON_AVG', 'CURRENT_SEASON_AVG', 'NEW_SEASON_WEIGHT',
+    'TEAM_GAME_NUM', 'PRIOR_WIN_PCT', 'CURRENT_WIN_PCT', 'TEAM_WEIGHT'
+]
+DROPPED_FEATURES = META_FEATURES + BAYESIAN_HELPERS + [
     'PLAYER_ID', 
     'TEAM_ID', 
     'GAME_ID',
@@ -55,34 +67,20 @@ DROPPED_FEATURES = META_FEATURES + [
     'WL',
     'VIDEO_AVAILABLE',
     'SCRAPED_AT',
-    'scraped_at'
+    'scraped_at',
+    'salary',
+    'POSITION',
+    'match_name'
 ]
 
 # The value we are trying to predict
 TARGET_COL = 'FANTASY_PTS'
 
-# Default rulebook to use if none is specified
-DEFAULT_SCORING_SYSTEM = 'wnba_default'
+
 
 # --- SCORING CONFIGURATION --
 
-SCORING_DIR = Path(__file__).resolve().parent.parent / "config" / "scoring"
-
-def load_scoring_system(system_name=DEFAULT_SCORING_SYSTEM):
-    """
-    Loads a scoring configuration from the config/scoring directory.
-    Usage: rules = load_scoring_system('fanduel_dfs')
-    """
-    filepath = SCORING_DIR / f"{system_name}.yml"
-    
-    if not filepath.exists():
-        raise FileNotFoundError(f"❌ Scoring system '{system_name}' not found at {filepath}")
-        
-    with open(filepath, 'r') as file:
-        config_data = yaml.safe_load(file)
-        
-    print(f"Loaded Scoring System: {config_data['name']}")
-    return config_data['weights']
+SCORING_DIR = PROJECT_ROOT / "config" / "scoring"
 
 # FANTASY GAME CONSTRAINTS (e.g., DraftKings WNBA Rules)
 SALARY_CAP = 50000
