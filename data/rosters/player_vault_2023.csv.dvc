@@ -1,0 +1,5 @@
+outs:
+- md5: 8b834b8f82a24e2f2e708b24d4024941
+  size: 27099
+  hash: md5
+  path: player_vault_2023.csv

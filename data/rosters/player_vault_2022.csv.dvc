@@ -1,0 +1,5 @@
+outs:
+- md5: d0336f8fd910c48d7dba9e5b7369f38e
+  size: 26570
+  hash: md5
+  path: player_vault_2022.csv
