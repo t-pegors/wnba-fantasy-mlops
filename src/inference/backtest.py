@@ -111,11 +111,18 @@ def run_backtest(target_date):
         return
         
     # --- B. Load & Normalize Vault ---
-    vault_path = config.DATA_DIR / "metadata" / "player_vault_final.csv" # Or player_vault_2025.csv
+    year = target_date[:4]
+    vault_path = config.DATA_DIR / "metadata" / f"player_vault_{year}.csv"
+    if not vault_path.exists():
+        available = sorted((config.DATA_DIR / "metadata").glob("player_vault_*.csv"))
+        vault_path = available[-1] if available else None
+    if vault_path is None:
+        print("⚠️ No player vault found. Run build_player_vault.py first!")
+        return
     try:
         vault_df = pd.read_csv(vault_path)
-    except FileNotFoundError:
-        print("⚠️ Vault not found. Run the scraper/hydration scripts first!")
+    except Exception as e:
+        print(f"⚠️ Could not load vault at {vault_path}: {e}")
         return
 
     print(f"🔄 Merging {len(day_df)} game records with API Vault Metadata...")

@@ -59,18 +59,26 @@ def run_bulk_backtest(target_month="2025-05"):
         return
 
     df = pd.read_csv(config.PROCESSED_DATA_DIR / "training_features.csv")
-    vault_df = pd.read_csv(config.DATA_DIR / "metadata" / "player_vault_final.csv")
-    
+
+    # Pre-load all available season vaults, keyed by year string
+    vault_by_year = {}
+    for season in config.SEASONS_TO_FETCH:
+        path = config.DATA_DIR / "metadata" / f"player_vault_{season}.csv"
+        if path.exists():
+            vdf = pd.read_csv(path)
+            vdf['match_name'] = vdf['PLAYER_NAME'].apply(normalize_name)
+            vault_by_year[season] = vdf
+    if not vault_by_year:
+        print("⚠️ No player vaults found. Run build_player_vault.py first!")
+        return
+
     # 2. Filter to the Target Timeframe
     df['GAME_DATE'] = pd.to_datetime(df['GAME_DATE'])
     month_df = df[df['GAME_DATE'].dt.strftime('%Y-%m') == target_month].copy()
-    
+
     if month_df.empty:
         print(f"❌ No games found in {target_month}.")
         return
-
-    # Normalization prep
-    vault_df['match_name'] = vault_df['PLAYER_NAME'].apply(normalize_name)
     
     # 3. Financial Tracking Variables
     entry_fee = 5.00
@@ -95,6 +103,8 @@ def run_bulk_backtest(target_month="2025-05"):
         day_df = month_df[month_df['GAME_DATE'].dt.strftime('%Y-%m-%d') == date_str].copy()
         
         # Hydrate & Normalize
+        year = date_str[:4]
+        vault_df = vault_by_year.get(year, next(iter(vault_by_year.values())))
         day_df['match_name'] = day_df['PLAYER_NAME'].apply(normalize_name)
         day_df = day_df.merge(vault_df[['match_name', 'POSITION']], on='match_name', how='left')
         day_df['POSITION'] = day_df['POSITION'].apply(normalize_position)

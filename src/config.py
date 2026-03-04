@@ -13,14 +13,15 @@ PROCESSED_DATA_DIR = DATA_DIR / "processed"
 # WNBA League ID is always '10' in nba_api
 WNBA_LEAGUE_ID = '10'
 
-# List of seasons to fetch. 
-# WNBA seasons are typically referenced by year (e.g., '2024').
-# You can add past seasons here to build a historical dataset.
-SEASONS_TO_FETCH = ['2021', '2022'] #, '2023', '2024', '2025']
+# Active season for the dashboard and live optimizer
+CURRENT_SEASON = '2025'
+
+# Historical seasons for data pulls and backtesting
+SEASONS_TO_FETCH = ['2021', '2022', '2023', '2024', '2025']
 
 # --- PIPELINE CONTROL ---
 # Set to True if you want to force a re-download of existing data
-OVERWRITE = True
+OVERWRITE = False
 
 # API Retry Settings
 MAX_RETRIES = 3
