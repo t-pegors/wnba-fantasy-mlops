@@ -111,9 +111,9 @@ with tab_vault:
     st.markdown("Monitor the state of the Open Source Intelligence (OSINT) proxies and historical data vault.")
     
     # Load the Data
-    vault_df = load_data(config.DATA_DIR / "metadata" / f"player_vault_{config.CURRENT_SEASON}.csv")
-    ncaa_df = load_data(config.DATA_DIR / "metadata" / "rookie_proxies.csv")
-    intl_df = load_data(config.DATA_DIR / "metadata" / "intl_proxies.csv")
+    vault_df = load_data(config.ROSTERS_DATA_DIR / f"player_vault_{config.CURRENT_SEASON}.csv")
+    ncaa_df = load_data(config.CURATED_DATA_DIR / "rookie_proxies.csv")
+    intl_df = load_data(config.CURATED_DATA_DIR / "intl_proxies.csv")
     golden_df = load_data(config.PROCESSED_DATA_DIR / "training_features.csv")
     
     # 1. Top-Level Metrics

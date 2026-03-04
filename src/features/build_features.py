@@ -137,8 +137,8 @@ def engineer_features():
     print("🧬 Injecting Rookie Pedigree Proxies...")
     
     # 1. Load the OSINT databases
-    ncaa_path = config.DATA_DIR / "metadata" / "rookie_proxies.csv"
-    intl_path = config.DATA_DIR / "metadata" / "intl_proxies.csv"
+    ncaa_path = config.CURATED_DATA_DIR / "rookie_proxies.csv"
+    intl_path = config.CURATED_DATA_DIR / "intl_proxies.csv"
     
     proxy_dfs = []
     if ncaa_path.exists():
@@ -180,7 +180,7 @@ def engineer_features():
         df = df.drop(columns=['match_name', 'WNBA_ROOKIE_PROXY'])
     else:
         # Fallback if the CSVs are completely missing
-        print("   ⚠️ WARNING: No proxy CSVs found in metadata! All missing players defaulting to 12.0.")
+        print("   ⚠️ WARNING: No proxy CSVs found in data/curated/. All missing players defaulting to 12.0.")
         df['PRIOR_SEASON_AVG'] = df['PRIOR_SEASON_AVG'].fillna(12.0)
 
     # Season-to-Date Average (Bayesian Blend for Early Season)

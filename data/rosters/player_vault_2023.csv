@@ -1,0 +1,145 @@
+PERSON_ID,DISPLAY_LAST_COMMA_FIRST,PLAYER_NAME,ROSTERSTATUS,FROM_YEAR,TO_YEAR,PLAYERCODE,PLAYER_SLUG,TEAM_ID,TEAM_CITY,TEAM_NAME,TEAM_ABBREVIATION,TEAM_CODE,TEAM_SLUG,IS_NBA_ASSIGNED,NBA_ASSIGNED_TEAM_ID,GAMES_PLAYED_FLAG,POSITION,HEIGHT,WEIGHT,SEASON_EXP,BIRTHDATE,COUNTRY,SCHOOL
+203831,"Achonwa, Natalie",Natalie Achonwa,1,2015,2023,natalie_achonwa,natalie_achonwa,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-3,198,9,1992-11-22T00:00:00,Canada,Notre Dame
+1628263,"Allen, Lindsay",Lindsay Allen,1,2017,2025,lindsay_allen,lindsay_allen,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Guard,5-8,145,7,1995-03-20T00:00:00,USA,Notre Dame
+204296,"Allen, Rebecca",Rebecca Allen,1,2015,2025,rebecca_allen,rebecca_allen,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Forward-Guard,6-2,162,9,1992-11-06T00:00:00,Australia,Melbourne
+1641656,"Amihere, Laeticia",Laeticia Amihere,1,2023,2025,laeticia_amihere,laeticia_amihere,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward,6-3,185,2,2001-07-10T00:00:00,Canada,South Carolina
+1628878,"Atkins, Ariel",Ariel Atkins,1,2018,2025,ariel_atkins,ariel_atkins,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,5-10,167,7,1996-07-30T00:00:00,USA,University of Texas at Austin
+1631022,"Austin, Shakira",Shakira Austin,1,2022,2025,shakira_austin,shakira_austin,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Forward-Center,6-5,190,3,2000-07-25T00:00:00,USA,Mississippi
+1627671,"Banham, Rachel",Rachel Banham,1,2016,2025,rachel_banham,rachel_banham,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Guard,5-10,181,9,1993-07-15T00:00:00,USA,Minnesota
+1631006,"Bell, Kierstan",Kierstan Bell,1,2022,2025,kierstan_bell,kierstan_bell,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Forward,6-1,176,3,2000-03-16T00:00:00,USA,Florida Gulf Coast
+1641658,"Berger, Grace",Grace Berger,1,2023,2025,grace_berger,grace_berger,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,5-11,163,2,1999-06-03T00:00:00,USA,Indiana
+1629571,"Bertsch, Morgan",Morgan Bertsch,1,2023,2024,morgan_bertsch,morgan_bertsch,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-4,173,3,1997-04-20T00:00:00,USA,Cal-Davis
+1628881,"Billings, Monique",Monique Billings,1,2018,2025,monique_billings,monique_billings,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward,6-4,192,7,1996-05-02T00:00:00,USA,UCLA
+201886,"Bonner, DeWanna",DeWanna Bonner,1,2009,2025,dewanna_bonner,dewanna_bonner,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard-Forward,6-4,140,15,1987-08-21T00:00:00,USA,Auburn
+1641648,"Boston, Aliyah",Aliyah Boston,1,2023,2025,tmp_aliyah_boston,aliyah_boston,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Center-Forward,6-5,220,2,2001-12-11T00:00:00,USA,South Carolina
+1629480,"Brown, Kalani",Kalani Brown,1,2019,2025,kalani_brown,kalani_brown,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Center,6-7,245,5,1997-03-21T00:00:00,USA,Baylor
+1641665,"Brown, Leigha",Leigha Brown,1,2023,2023,leigha_brown,leigha_brown,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard,6-1,165,2,2000-07-14T00:00:00,USA,Michigan
+1628882,"Brown, Lexie",Lexie Brown,1,2018,2025,lexie_brown,lexie_brown,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-9,162,7,1994-10-27T00:00:00,USA,Duke
+1630996,"Burrell, Rae",Rae Burrell,1,2022,2025,rae_burrell,rae_burrell,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard-Forward,6-2,168,3,2000-06-21T00:00:00,USA,Tennessee
+1631007,"Burton, Veronica",Veronica Burton,1,2022,2025,veronica_burton,veronica_burton,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,5-9,155,3,2000-07-12T00:00:00,USA,Northwestern
+1630471,"Caldwell, Maya",Maya Caldwell,1,2022,2025,maya_caldwell,maya_caldwell,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,5-11,160,3,1998-12-15T00:00:00,USA,Georgia
+1628886,"Canada, Jordin",Jordin Canada,1,2018,2025,jordin_canada,jordin_canada,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-6,135,7,1995-08-11T00:00:00,USA,UCLA
+1628242,"Cannon, Emma",Emma Cannon,1,2017,2025,emma_cannon,emma_cannon,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Forward,6-2,190,6,1989-06-01T00:00:00,USA,Florida Southern
+1629524,"Carleton, Bridget",Bridget Carleton,1,2019,2025,bridget_carleton,bridget_carleton,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-2,177,6,1997-05-22T00:00:00,Canada,Iowa State
+1630096,"Carrington, DiJonai",DiJonai Carrington,1,2021,2025,dijonai_carrington,dijonai_carrington,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard-Forward,5-11,175,4,1998-01-08T00:00:00,USA,Baylor
+203406,"Clarendon, Layshia",Layshia Clarendon,1,2013,2024,layshia_clarendon,layshia_clarendon,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-9,158,12,1991-05-02T00:00:00,USA,California
+202252,"Clark, Alysha",Alysha Clark,1,2012,2025,alysha_clark,alysha_clark,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Forward,5-11,167,12,1987-07-07T00:00:00,USA,Middle Tennessee
+204333,"Cloud, Natasha",Natasha Cloud,1,2015,2025,natasha_cloud,natasha_cloud,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,5-10,160,9,1992-02-22T00:00:00,USA,St. Joseph's (PA)
+1631002,"Clouden, Nia",Nia Clouden,1,2022,2023,nia_clouden,nia_clouden,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-9,139,3,2000-05-17T00:00:00,USA,Michigan State
+1628268,"Coates, Alaina",Alaina Coates,1,2018,2023,alaina_coates,alaina_coates,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Center,6-4,225,6,1995-04-07T00:00:00,USA,South Carolina
+1628269,"Coffey, Nia",Nia Coffey,1,2017,2025,nia_coffey,nia_coffey,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward,6-1,182,8,1995-06-11T00:00:00,USA,Northwestern
+1629483,"Collier, Napheesa",Napheesa Collier,1,2019,2025,napheesa_collier,napheesa_collier,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-1,180,6,1996-09-23T00:00:00,USA,Connecticut
+202641,"Colson, Sydney",Sydney Colson,1,2011,2025,sydney_colson,sydney_colson,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Guard,5-8,137,10,1989-08-06T00:00:00,USA,Texas A&M
+1641660,"Cooke, Zia",Zia Cooke,1,2023,2025,zia_cooke,zia_cooke,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-9,163,2,2001-01-09T00:00:00,USA,South Carolina
+1627674,"Copper, Kahleah",Kahleah Copper,1,2016,2025,kahleah_copper,kahleah_copper,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Guard-Forward,6-1,165,9,1994-08-28T00:00:00,USA,Rutgers
+1629482,"Cunningham, Sophie",Sophie Cunningham,1,2019,2025,sophie_cunningham,sophie_cunningham,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,6-1,165,6,1996-08-16T00:00:00,USA,Missouri
+1630101,"Dangerfield, Crystal",Crystal Dangerfield,1,2020,2024,crystal_dangerfield,crystal_dangerfield,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,5-5,130,6,1998-05-11T00:00:00,USA,Connecticut
+1628890,"DeShields, Diamond",Diamond DeShields,1,2018,2024,diamond_deshields,diamond_deshields,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,6-1,172,7,1995-03-05T00:00:00,USA,Tennessee
+203399,"Delle Donne, Elena",Elena Delle Donne,1,2013,2023,elena_delle donne,elena_delle_donne,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Forward-Guard,6-5,187,11,1989-09-05T00:00:00,USA,Delaware
+203400,"Diggins, Skylar",Skylar Diggins,1,2013,2025,skylar_diggins-smith,skylar_diggins,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,5-9,140,10,1990-08-02T00:00:00,USA,Notre Dame
+203828,"Dolson, Stefanie",Stefanie Dolson,1,2014,2025,stefanie_dolson,stefanie_dolson,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Center,6-5,235,11,1992-01-08T00:00:00,USA,Connecticut
+1629476,"Durr, Asia (AD)",Asia (AD) Durr,1,2019,2023,asia_durr,asia_(ad)_durr,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Guard,5-10,151,4,1997-04-05T00:00:00,USA,Louisville
+1631031,"Egbo, Queen",Queen Egbo,1,2022,2024,queen_egbo,queen_egbo,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Forward-Center,6-4,190,4,2000-06-29T00:00:00,USA,Baylor
+1630389,"Evans, Dana",Dana Evans,1,2021,2025,dana_evans,dana_evans,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Guard,5-6,145,4,1998-08-01T00:00:00,USA,Louisville
+1641675,"Fankam Mendjiadeu, Dulcy",Dulcy Fankam Mendjiadeu,1,2023,2024,dulcy_fankam_mendjiadeu,dulcy_fankam_mendjiadeu,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Forward-Center,6-3,204,2,1999-07-26T00:00:00,Cameroon,South Florida
+203822,"Gardner, Rebekah",Rebekah Gardner,1,2022,2025,rebekah_gardner,rebekah_gardner,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Guard,6-1,130,2,1990-07-09T00:00:00,USA,UCLA
+204297,"George, Cayla",Cayla George,1,2015,2023,cayla_george,cayla_george,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Center-Forward,6-4,192,5,1989-05-01T00:00:00,Australia,                                   
+1628277,"Gray, Allisha",Allisha Gray,1,2017,2025,allisha_gray,allisha_gray,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Guard,6-0,167,8,1995-01-12T00:00:00,USA,South Carolina
+203833,"Gray, Chelsea",Chelsea Gray,1,2015,2025,chelsea_gray,chelsea_gray,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Guard,5-11,170,10,1992-10-08T00:00:00,USA,Duke
+203398,"Griner, Brittney",Brittney Griner,1,2013,2025,brittney_griner,brittney_griner,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Center,6-9,205,11,1990-10-18T00:00:00,USA,Baylor
+1629484,"Gustafson, Megan",Megan Gustafson,1,2019,2025,megan_gustafson,megan_gustafson,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Center,6-4,195,6,1996-12-13T00:00:00,USA,Iowa
+204324,"Hamby, Dearica",Dearica Hamby,1,2015,2025,dearica_hamby,dearica_hamby,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Forward,6-3,189,10,1993-11-06T00:00:00,USA,Wake Forest
+1629566,Han Xu,Han Xu,1,2019,2023,han_xu,xu_han,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Center,6-11,203,4,1999-10-31T00:00:00,China,                                   
+1630112,"Harris, Tyasha",Tyasha Harris,1,2020,2025,tyasha_harris,tyasha_harris,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard,5-10,152,5,1998-05-01T00:00:00,USA,South Carolina
+204330,"Harrison, Isabelle",Isabelle Harrison,1,2016,2025,isabelle_harrison,isabelle_harrison,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-3,183,7,1993-09-27T00:00:00,USA,Tennessee
+1630043,"Határ, Bernadett",Bernadett Határ,1,2021,2023,bernadett_hatar,bernadett_határ,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Center,6-10,208,3,1994-08-24T00:00:00,Hungary,                                   
+203403,"Hawkins, Tianna",Tianna Hawkins,1,2013,2023,tianna_hawkins,tianna_hawkins,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Forward,6-3,186,11,1991-03-02T00:00:00,USA,Maryland
+203026,"Hayes, Tiffany",Tiffany Hayes,1,2012,2025,tiffany_hayes,tiffany_hayes,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard,5-10,155,12,1989-09-20T00:00:00,USA,Connecticut
+1630113,"Hebard, Ruthy",Ruthy Hebard,1,2020,2023,ruthy_hebard,ruthy_hebard,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-4,190,5,1998-04-28T00:00:00,USA,Oregon
+1629567,"Hiedeman, Natisha",Natisha Hiedeman,1,2019,2025,natisha_hiedeman,natisha_hiedeman,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Guard,5-8,132,6,1997-02-10T00:00:00,USA,Marquette
+1631044,"Hillmon, Naz",Naz Hillmon,1,2022,2025,naz_hillmon,naz_hillmon,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward,6-2,190,3,2000-04-05T00:00:00,USA,Michigan
+1628899,"Hines-Allen, Myisha",Myisha Hines-Allen,1,2018,2025,myisha_hines-allen,myisha_hines-allen,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Forward,6-1,200,7,1995-05-30T00:00:00,USA,Louisville
+1630115,"Holmes, Joyner",Joyner Holmes,1,2020,2025,joyner_holmes,joyner_holmes,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Forward,6-3,210,5,1998-02-22T00:00:00,USA,University of Texas at Austin
+1641651,"Horston, Jordan",Jordan Horston,1,2023,2024,jordan_horston,jordan_horston,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Forward,6-2,165,3,2001-05-21T00:00:00,USA,Tennessee
+203827,"Howard, Natasha",Natasha Howard,1,2014,2025,natasha_howard,natasha_howard,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Forward,6-3,172,11,1991-09-02T00:00:00,USA,Florida State
+1631009,"Howard, Rhyne",Rhyne Howard,1,2022,2025,rhyne_howard,rhyne_howard,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Guard,6-2,175,3,2000-04-29T00:00:00,USA,Kentucky
+1631086,"Hull, Lexie",Lexie Hull,1,2022,2025,lexie_hull,lexie_hull,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,6-1,155,3,1999-09-13T00:00:00,USA,Stanford
+1629477,"Ionescu, Sabrina",Sabrina Ionescu,1,2020,2025,sabrina_ionescu,sabrina_ionescu,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Guard,5-11,165,5,1997-12-06T00:00:00,USA,Oregon
+1627669,"Jefferson, Moriah",Moriah Jefferson,1,2016,2025,moriah_jefferson,moriah_jefferson,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,5-6,130,8,1994-03-08T00:00:00,USA,Connecticut
+1641653,"Joens, Ashley",Ashley Joens,1,2023,2023,ashley_joens,ashley_joens,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,6-1,160,2,2000-03-16T00:00:00,USA,Iowa State
+1629546,"Johannès, Marine",Marine Johannès,1,2019,2025,marine_johannes,marine_johannès,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Guard,5-10,134,3,1995-01-21T00:00:00,France,                                   
+1628280,"Jones, Brionna",Brionna Jones,1,2017,2025,brionna_jones,brionna_jones,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Forward,6-3,215,8,1995-12-18T00:00:00,USA,Maryland
+1641650,"Jones, Haley",Haley Jones,1,2023,2025,haley_jones,haley_jones,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward-Guard,6-1,187,2,2001-05-23T00:00:00,USA,Stanford
+1627673,"Jones, Jonquel",Jonquel Jones,1,2016,2025,jonquel_jones,jonquel_jones,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Center,6-6,215,8,1994-01-05T00:00:00,Bahamas,George Washington
+1641657,"Juhász, Dorka",Dorka Juhász,1,2023,2024,dorka_juhász,dorka_juhász,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-5,191,3,1999-12-18T00:00:00,Hungary,Connecticut
+1631021,"Koné, Sika",Sika Koné,1,2023,2025,sika_kone,sika_koné,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-3,180,2,2002-07-13T00:00:00,Spain,Spain
+1630386,"Kuier, Awak",Awak Kuier,1,2021,2023,awak_kuier,awak_kuier,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Forward,6-6,168,4,2001-08-19T00:00:00,Finland,Ragusa
+204335,"Laney-Hamilton, Betnijah",Betnijah Laney-Hamilton,1,2015,2024,betnijah_laney,betnijah_laney-hamilton,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Guard-Forward,6-0,166,10,1993-10-29T00:00:00,USA,Rutgers
+1641661,"Lopez Sénéchal, Lou",Lou Lopez Sénéchal,1,2023,2024,lou_lopez_sénéchal,lou_lopez_sénéchal,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,6-1,155,2,1998-05-12T00:00:00,France,Connecticut
+204319,"Loyd, Jewell",Jewell Loyd,1,2015,2025,jewell_loyd,jewell_loyd,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Guard,5-11,175,10,1993-10-05T00:00:00,USA,Notre Dame
+1629497,"Mabrey, Marina",Marina Mabrey,1,2019,2025,marina_mabrey,marina_mabrey,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Guard,5-11,170,6,1996-09-14T00:00:00,USA,Notre Dame
+1629496,"Magbegor, Ezi",Ezi Magbegor,1,2020,2025,ezi_magbegor,ezi_magbegor,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Forward-Center,6-4,181,5,1999-08-13T00:00:00,Australia,Melbourne
+203825,"McBride, Kayla",Kayla McBride,1,2014,2025,kayla_mcbride,kayla_mcbride,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Guard,5-11,185,11,1992-06-25T00:00:00,USA,Notre Dame
+1629479,"McCowan, Teaira",Teaira McCowan,1,2019,2025,teaira_mccowan,teaira_mccowan,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Center,6-7,239,6,1996-09-28T00:00:00,USA,Mississippi State
+1630462,"McDonald, Aari",Aari McDonald,1,2021,2025,aari_mcdonald,aari_mcdonald,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Guard,5-6,141,4,1998-08-20T00:00:00,USA,Arizona
+1631141,"Melbourne, Jade",Jade Melbourne,1,2023,2025,tmp_jade_melbourne,jade_melbourne,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Guard,5-10,145,2,2002-08-18T00:00:00,Australia,                                   
+1641642,"Meng, Li",Li Meng,1,2023,2023,tmp_li_meng,li_meng,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,6-0,198,2,1995-01-02T00:00:00,China,                                   
+1631263,"Milić, Nikolina",Nikolina Milić,1,2022,2023,nina_milic,nikolina_milić,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-3,181,3,1994-04-12T00:00:00,Bosnia and Herzegovina,                                   
+1641649,"Miller, Diamond",Diamond Miller,1,2023,2025,diamond_miller,diamond_miller,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-3,178,2,2001-02-11T00:00:00,USA,Maryland
+1628909,"Mitchell, Kelsey",Kelsey Mitchell,1,2018,2025,kelsey_mitchell,kelsey_mitchell,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,5-8,155,7,1995-11-12T00:00:00,USA,Ohio State
+1627676,"Mitchell, Tiffany",Tiffany Mitchell,1,2016,2025,tiffany_mitchell,tiffany_mitchell,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Guard,5-9,169,9,1994-09-23T00:00:00,USA,South Carolina
+1631135,"Nelson-Ododa, Olivia",Olivia Nelson-Ododa,1,2022,2025,olivia_nelson-ododa,olivia_nelson-ododa,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Center,6-5,176,3,2000-08-17T00:00:00,USA,Connecticut
+1628915,"Nurse, Kia",Kia Nurse,1,2018,2025,kia_nurse,kia_nurse,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Guard,6-0,181,6,1996-02-22T00:00:00,Canada,Connecticut
+1629481,"Ogunbowale, Arike",Arike Ogunbowale,1,2019,2025,arike_ogunbowale,arike_ogunbowale,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,5-8,165,6,1997-03-02T00:00:00,USA,Notre Dame
+203823,"Ogwumike, Chiney",Chiney Ogwumike,1,2014,2023,chiney_ogwumike,chiney_ogwumike,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Forward-Center,6-3,183,8,1992-03-21T00:00:00,USA,Stanford
+203014,"Ogwumike, Nneka",Nneka Ogwumike,1,2012,2025,nneka_ogwumike,nneka_ogwumike,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Forward,6-2,190,13,1990-07-02T00:00:00,USA,Stanford
+1630446,"Onyenwere, Michaela",Michaela Onyenwere,1,2021,2025,michaela_onyenwere,michaela_onyenwere,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Forward,6-0,178,4,1999-08-10T00:00:00,USA,UCLA
+201496,"Parker, Candace",Candace Parker,1,2008,2023,candace_parker,candace_parker,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Forward-Center,6-4,184,17,1986-04-19T00:00:00,USA,Tennessee
+204323,"Parker-Tyus, Cheyenne",Cheyenne Parker-Tyus,1,2015,2025,cheyenne_parker,cheyenne_parker-tyus,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Forward,6-4,193,10,1992-08-22T00:00:00,USA,Middle Tennessee
+1641641,"Parks, Robyn",Robyn Parks,1,2023,2025,robyn_parks,robyn_parks,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-1,170,1,1992-07-19T00:00:00,USA,Va Commonwealth
+203035,"Peddy, Shey",Shey Peddy,1,2019,2025,shey_peddy,shey_peddy,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,5-7,145,5,1988-10-28T00:00:00,USA,Temple
+1628276,"Plum, Kelsey",Kelsey Plum,1,2017,2025,kelsey_plum,kelsey_plum,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Guard,5-8,145,7,1994-08-24T00:00:00,USA,Washington
+1627672,"Powers, Aerial",Aerial Powers,1,2016,2025,aerial_powers,aerial_powers,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Guard,5-11,170,9,1994-01-17T00:00:00,USA,Michigan State
+202658,"Robinson, Danielle",Danielle Robinson,1,2011,2023,danielle_robinson,danielle_robinson,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Guard,5-9,137,13,1989-05-10T00:00:00,USA,Oklahoma
+1630387,"Rupert, Iliana",Iliana Rupert,1,2022,2025,iliana_rupert,iliana_rupert,1611661330,Atlanta,Dream,ATL,dream,dream,0,0,Y,Center,6-4,189,2,2001-07-12T00:00:00,France,Tango Bourges
+1628920,"Russell, Mercedes",Mercedes Russell,1,2018,2025,mercedes_russell,mercedes_russell,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Center,6-6,195,7,1995-07-27T00:00:00,USA,Tennessee
+1631055,"Sabally, Nyara",Nyara Sabally,1,2023,2025,nyara_sabally,nyara_sabally,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Center,6-5,204,2,2000-02-26T00:00:00,USA,Oregon
+1630149,"Sabally, Satou",Satou Sabally,1,2020,2025,satou_sabally,satou_sabally,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Forward,6-4,175,5,1998-04-25T00:00:00,USA,Oregon
+1628317,"Samuelson, Karlie",Karlie Samuelson,1,2018,2025,karlie_samuelson,karlie_samuelson,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,6-0,162,6,1995-05-10T00:00:00,USA,Stanford
+1629478,"Samuelson, Katie Lou",Katie Lou Samuelson,1,2019,2025,katie_lou_samuelson,katie_lou_samuelson,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Forward,6-3,163,5,1997-06-13T00:00:00,USA,Connecticut
+1641687,"Saxton, Victaria",Victaria Saxton,1,2023,2024,victaria_saxton,victaria_saxton,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Forward,6-2,181,3,1999-11-10T00:00:00,USA,South Carolina
+1629491,"Shepard, Jessica",Jessica Shepard,1,2019,2025,jessica_shepard,jessica_shepard,1611661324,Minnesota,Lynx,MIN,lynx,lynx,0,0,Y,Forward,6-4,175,4,1996-09-11T00:00:00,USA,Notre Dame
+1641652,"Siegrist, Maddy",Maddy Siegrist,1,2023,2025,maddy_siegrist,maddy_siegrist,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Forward,6-2,175,2,2000-05-22T00:00:00,USA,Villanova
+203824,"Sims, Odyssey",Odyssey Sims,1,2014,2025,odyssey_sims,odyssey_sims,1611661321,Dallas,Wings,DAL,wings,wings,0,0,Y,Guard,5-8,155,11,1992-07-13T00:00:00,USA,Baylor
+1641690,"Sissoko, Kadi",Kadi Sissoko,1,2023,2023,kadiatou_sissoko,kadi_sissoko,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Forward,6-2,165,2,1999-01-25T00:00:00,USA,USC
+1629501,"Smith, Alanna",Alanna Smith,1,2019,2025,alanna_smith,alanna_smith,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,6-4,177,6,1996-09-10T00:00:00,Australia,Stanford
+1631019,"Smith, NaLyssa",NaLyssa Smith,1,2022,2025,nalyssa_smith,nalyssa_smith,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Forward,6-4,185,3,2000-08-08T00:00:00,USA,Baylor
+1641667,"Soule, Taylor",Taylor Soule,1,2023,2024,taylor_soule,taylor_soule,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Forward,5-11,188,3,2000-01-05T00:00:00,USA,Virginia Tech
+1628922,"Stevens, Azurá",Azurá Stevens,1,2018,2025,azura_stevens,azurá_stevens,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Forward-Center,6-6,180,7,1996-02-01T00:00:00,USA,Connecticut
+1627668,"Stewart, Breanna",Breanna Stewart,1,2016,2025,breanna_stewart,breanna_stewart,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Forward,6-4,170,8,1994-08-27T00:00:00,USA,Connecticut
+204329,"Stokes, Kiah",Kiah Stokes,1,2015,2025,kiah_stokes,kiah_stokes,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Center,6-3,191,9,1993-03-30T00:00:00,USA,Connecticut
+1630134,"Sutton, Sug",Sug Sutton,1,2020,2025,sug_sutton,sug_sutton,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,5-8,140,3,1998-12-17T00:00:00,USA,University of Texas at Austin
+1628279,"Sykes, Brittney",Brittney Sykes,1,2017,2025,brittney_sykes,brittney_sykes,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,5-9,154,8,1994-02-07T00:00:00,USA,Syracuse
+100940,"Taurasi, Diana",Diana Taurasi,1,2004,2024,diana_taurasi,diana_taurasi,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,6-0,163,21,1982-06-11T00:00:00,USA,Connecticut
+203826,"Thomas, Alyssa",Alyssa Thomas,1,2014,2025,alyssa_thomas,alyssa_thomas,1611661323,Connecticut,Sun,CON,sun,sun,0,0,Y,Forward,6-2,203,11,1992-04-12T00:00:00,USA,Maryland
+202662,"Thomas, Jasmine",Jasmine Thomas,1,2011,2023,jasmine_thomas,jasmine_thomas,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,5-9,143,14,1989-09-30T00:00:00,USA,Duke
+203866,"Thornton, Kayla",Kayla Thornton,1,2015,2025,kayla_thornton,kayla_thornton,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Forward,6-1,190,9,1992-10-20T00:00:00,USA,Texas-El Paso
+201911,"Toliver, Kristi",Kristi Toliver,1,2009,2023,kristi_toliver,kristi_toliver,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,5-7,130,15,1987-01-27T00:00:00,USA,Maryland
+1629488,"Turner, Brianna",Brianna Turner,1,2019,2025,brianna_turner,brianna_turner,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Forward-Center,6-3,175,6,1996-07-05T00:00:00,USA,Notre Dame
+203389,"Turner, Yvonne",Yvonne Turner,1,2017,2023,yvonne_turner,yvonne_turner,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Guard,5-10,127,6,1987-10-13T00:00:00,USA,Nebraska
+202664,"Vandersloot, Courtney",Courtney Vandersloot,1,2011,2025,courtney_vandersloot,courtney_vandersloot,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Guard,5-8,137,14,1989-02-08T00:00:00,USA,Gonzaga
+1628927,"Vivians, Victoria",Victoria Vivians,1,2018,2024,victoria_vivians,victoria_vivians,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard-Forward,6-1,197,7,1994-11-17T00:00:00,USA,Mississippi State
+1628278,"Walker-Kimbrough, Shatori",Shatori Walker-Kimbrough,1,2017,2025,shatori_walker-kimbrough,shatori_walker-kimbrough,1611661322,Washington,Mystics,WAS,mystics,mystics,0,0,Y,Guard,5-9,140,8,1995-05-18T00:00:00,USA,Maryland
+1628929,"Wallace, Kristy",Kristy Wallace,1,2022,2024,kristy_wallace,kristy_wallace,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,5-11,157,4,1996-01-03T00:00:00,Australia,Baylor
+1631091,"Westbrook, Evina",Evina Westbrook,1,2022,2023,tmp_evina_westbrook,evina_westbrook,1611661320,Los Angeles,Sparks,LAS,sparks,sparks,0,0,Y,Guard,6-0,158,3,1998-09-28T00:00:00,USA,Connecticut
+204365,"Wheeler, Erica",Erica Wheeler,1,2015,2025,erica_wheeler,erica_wheeler,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Guard,5-7,143,9,1991-05-02T00:00:00,USA,Rutgers
+1628244,"Whitcomb, Sami",Sami Whitcomb,1,2017,2025,sami_whitcomb,sami_whitcomb,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Guard,5-10,149,8,1988-07-20T00:00:00,Australia,Washington
+1631090,"Williams, Christyn",Christyn Williams,1,2023,2025,christyn_williams,christyn_williams,1611661317,Phoenix,Mercury,PHO,mercury,mercury,0,0,Y,Guard,5-11,174,0,2000-05-20T00:00:00,USA,Connecticut
+1627675,"Williams, Courtney",Courtney Williams,1,2016,2025,courtney_williams,courtney_williams,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Guard,5-8,148,9,1994-05-11T00:00:00,USA,South Florida
+204322,"Williams, Elizabeth",Elizabeth Williams,1,2015,2025,elizabeth_williams,elizabeth_williams,1611661329,Chicago,Sky,CHI,sky,sky,0,0,Y,Center-Forward,6-3,200,10,1993-06-23T00:00:00,USA,Duke
+1628931,"Williams, Gabby",Gabby Williams,1,2018,2025,gabby_williams,gabby_williams,1611661328,Seattle,Storm,SEA,storm,storm,0,0,Y,Forward,5-11,172,6,1996-09-09T00:00:00,USA,Connecticut
+203029,"Williams, Riquna",Riquna Williams,1,2012,2023,riquna_williams,riquna_williams,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Guard,5-7,165,11,1990-05-28T00:00:00,USA,Miami
+1630139,"Willoughby, Jocelyn",Jocelyn Willoughby,1,2020,2023,jocelyn_willoughby,jocelyn_willoughby,1611661313,New York,Liberty,NYL,liberty,liberty,0,0,Y,Forward-Guard,6-0,180,4,1998-03-25T00:00:00,USA,Virginia
+1628932,"Wilson, A'ja",A'ja Wilson,1,2018,2025,a'ja_wilson,aja_wilson,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Center,6-4,195,7,1996-08-08T00:00:00,USA,South Carolina
+1629498,"Young, Jackie",Jackie Young,1,2019,2025,jackie_young,jackie_young,1611661319,Las Vegas,Aces,LVA,aces,aces,0,0,Y,Guard,6-0,165,6,1997-09-16T00:00:00,USA,Notre Dame
+204320,"Zahui B, Amanda",Amanda Zahui B,1,2015,2023,amanda_zahui b,amanda_zahui_b,1611661325,Indiana,Fever,IND,fever,fever,0,0,Y,Center,6-4,184,9,1993-09-08T00:00:00,Sweden,Minnesota

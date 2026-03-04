@@ -16,7 +16,7 @@ def build_vault_for_season(season: str) -> pd.DataFrame:
     Fetches and enriches the active WNBA roster for a given season year.
     Combines the former scrape_2025_players + hydrate_2025_players into one step.
 
-    Returns a DataFrame saved to data/metadata/player_vault_{season}.csv
+    Returns a DataFrame saved to data/rosters/player_vault_{season}.csv
     """
     print(f"\n{'='*55}")
     print(f"  Building Player Vault: Season {season}")
@@ -59,7 +59,7 @@ def build_vault_for_season(season: str) -> pd.DataFrame:
     print(f"   -> {len(active_df)} active players for {season} (have a team assignment).")
 
     # --- Step 3: Hydrate each active player with detailed metadata ---
-    output_path = config.DATA_DIR / "metadata" / f"player_vault_{season}.csv"
+    output_path = config.ROSTERS_DATA_DIR / f"player_vault_{season}.csv"
 
     # Season-level skip: if vault exists and all active players are already hydrated, done.
     existing_enriched = {}

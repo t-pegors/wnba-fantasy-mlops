@@ -64,7 +64,7 @@ def get_intl_pedigree(player_name):
 def build_intl_database():
     print("🌍 Initiating OSINT Protocol: Hunting International Pedigrees...")
     
-    target_path = config.DATA_DIR / "metadata" / "target_intl_rookies.csv"
+    target_path = config.CURATED_DATA_DIR / "target_intl_rookies.csv"
     
     if not target_path.exists():
         print(f"❌ Target list not found at {target_path}")
@@ -104,7 +104,7 @@ def build_intl_database():
 
     pedigree_df = pd.DataFrame(pedigree_records)
     
-    output_path = config.DATA_DIR / "metadata" / "intl_proxies.csv"
+    output_path = config.CURATED_DATA_DIR / "intl_proxies.csv"
     pedigree_df.to_csv(output_path, index=False)
     print(f"\n🎉 SUCCESS! Saved {len(pedigree_df)} International baseline proxies to {output_path}")
 

@@ -112,9 +112,9 @@ def run_backtest(target_date):
         
     # --- B. Load & Normalize Vault ---
     year = target_date[:4]
-    vault_path = config.DATA_DIR / "metadata" / f"player_vault_{year}.csv"
+    vault_path = config.ROSTERS_DATA_DIR / f"player_vault_{year}.csv"
     if not vault_path.exists():
-        available = sorted((config.DATA_DIR / "metadata").glob("player_vault_*.csv"))
+        available = sorted((config.ROSTERS_DATA_DIR).glob("player_vault_*.csv"))
         vault_path = available[-1] if available else None
     if vault_path is None:
         print("⚠️ No player vault found. Run build_player_vault.py first!")

@@ -63,7 +63,7 @@ def run_bulk_backtest(target_month="2025-05"):
     # Pre-load all available season vaults, keyed by year string
     vault_by_year = {}
     for season in config.SEASONS_TO_FETCH:
-        path = config.DATA_DIR / "metadata" / f"player_vault_{season}.csv"
+        path = config.ROSTERS_DATA_DIR / f"player_vault_{season}.csv"
         if path.exists():
             vdf = pd.read_csv(path)
             vdf['match_name'] = vdf['PLAYER_NAME'].apply(normalize_name)

@@ -42,9 +42,11 @@ config/scoring/
   nba_default.yml         # NBA alternative scoring
 
 data/
-  raw/                    # Raw game logs (DVC-tracked, stored in AWS S3)
-  processed/              # Engineered features (training_features.csv)
-  metadata/               # OSINT proxy data (NCAA/international pedigree)
+  raw/                    # API-fetched WNBA game logs (DVC-tracked, stored in AWS S3)
+  rosters/                # API-fetched player metadata per season (player_vault_*.csv)
+  curated/                # Hand-maintained reference files (rookie_proxies.csv, intl_proxies.csv, targets)
+  processed/              # ML pipeline outputs (training_features.csv)
+  slates/                 # DraftKings/FanDuel contest salary CSVs (optimizer input)
 
 .github/workflows/
   daily_ingest.yml        # Automated daily ingestion at 2 AM EST

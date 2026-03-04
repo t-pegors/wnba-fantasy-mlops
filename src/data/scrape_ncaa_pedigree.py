@@ -64,7 +64,7 @@ def build_rookie_database():
     print("🕵️‍♀️ Initiating OSINT Protocol: Hunting NCAA Pedigrees...")
     
     # Dynamically load the target list
-    target_path = config.DATA_DIR / "metadata" / "target_ncaa_rookies.csv"
+    target_path = config.CURATED_DATA_DIR / "target_ncaa_rookies.csv"
     
     if not target_path.exists():
         print(f"❌ Target list not found at {target_path}")
@@ -111,7 +111,7 @@ def build_rookie_database():
     pedigree_df = pd.DataFrame(pedigree_records)
     
     # Save the final lookup table
-    output_path = config.DATA_DIR / "metadata" / "rookie_proxies.csv"
+    output_path = config.CURATED_DATA_DIR / "rookie_proxies.csv"
     pedigree_df.to_csv(output_path, index=False)
     print(f"\n🎉 SUCCESS! Saved {len(pedigree_df)} NCAA baseline proxies to {output_path}")
 

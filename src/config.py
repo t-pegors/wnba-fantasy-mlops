@@ -6,8 +6,11 @@ import yaml
 # Automatically locate the root of the project relative to this file
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
-RAW_DATA_DIR = DATA_DIR / "raw"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
+RAW_DATA_DIR = DATA_DIR / "raw"        # API-fetched game logs (DVC-tracked)
+ROSTERS_DATA_DIR = DATA_DIR / "rosters"    # API-fetched player metadata per season
+CURATED_DATA_DIR = DATA_DIR / "curated"   # Hand-maintained reference files (proxies, targets)
+PROCESSED_DATA_DIR = DATA_DIR / "processed"  # ML pipeline outputs
+SLATES_DATA_DIR = DATA_DIR / "slates"     # DraftKings/FanDuel contest salary files
 
 # --- DATA INGESTION SETTINGS ---
 # WNBA League ID is always '10' in nba_api
@@ -85,8 +88,6 @@ ROSTER_SLOTS = {
 }
 TOTAL_SLOTS = 6
 
-# FILE PATHS
-SALARY_DATA_DIR = PROJECT_ROOT / "data" / "salaries"
 
 
 #######################
