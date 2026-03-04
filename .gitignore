@@ -31,5 +31,6 @@ data/metadata/*
 notes.md
 notebooks/*.ipynb
 src/models/model.ubj
+src/models/production/*
 src/diagnostics/
 reports/

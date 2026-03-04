@@ -26,13 +26,6 @@ OVERWRITE = True
 MAX_RETRIES = 3
 RETRY_DELAY = 5  # Seconds
 
-# --- ENTITY RESOLUTION CONFIG ---
-# The specific files we compare to create the Master Player Map
-# We use 2025 because it contains the most recent active roster including 2025 rookies
-MERGE_WNBA_SOURCE = RAW_DATA_DIR / "wnba_2025_gamelogs.csv"
-MERGE_UNRIVALED_SOURCE = PROCESSED_DATA_DIR / "unrivaled_2025_processed.csv"
-PLAYER_MAP_OUTPUT = PROCESSED_DATA_DIR / "player_mapping.csv"
-
 ###################################################
 # FEATURE ENGINEERING PARAMETERS
 ###################################################
@@ -93,3 +86,23 @@ TOTAL_SLOTS = 6
 
 # FILE PATHS
 SALARY_DATA_DIR = PROJECT_ROOT / "data" / "salaries"
+
+
+#######################
+## MODEL TRAINING #####
+#######################
+
+# --- MODEL HYPERPARAMETERS (Optimized via Grid Search 2026-03-03) ---
+XGB_PARAMS = {
+    'objective': 'reg:squarederror',
+    'learning_rate': 0.05,
+    'max_depth': 3,
+    'n_estimators': 68,  # Using the 1.1x scaling rule from best_iteration 61 ((61 + 1) * 1.1)
+    'random_state': 42,
+    'tree_method': 'hist',
+    'device': 'cuda'
+}
+
+# --- TRAINING SETTINGS ---
+# Set to 1.0 for final production builds, or 0.8 for validation runs
+TRAIN_SPLIT_PERCENT = 1.0

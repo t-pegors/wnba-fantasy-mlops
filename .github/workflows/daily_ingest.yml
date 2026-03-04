@@ -47,7 +47,6 @@ jobs:
       - name: Run Data Scrapers
         run: |
           python src/data/wnba_loader.py || echo "⚠️ WNBA scraper failed (likely IP block). Using historical data."
-          python src/data/unrivaled_loader.py
 
       - name: Version Data with DVC & Push to S3
         run: |

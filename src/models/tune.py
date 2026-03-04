@@ -9,6 +9,7 @@ import mlflow
 from mlflow.models.signature import infer_signature
 from dotenv import load_dotenv
 import time
+import cupy as cp
 import warnings
 # Filter out the specific MLflow schema hint and the artifact_path deprecation
 warnings.filterwarnings("ignore", category=UserWarning, module="mlflow")
@@ -49,19 +50,24 @@ def tune_hyperparameters():
     X = X.astype('float64')
 
     # 4. Chronological Train-Test Split (80/20)
+    # 4. Chronological Train-Test Split
     split_idx = int(len(df) * 0.8)
-    X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-    y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+    
+    # Move to GPU immediately using CuPy
+    X_train = cp.asarray(X.iloc[:split_idx].values)
+    X_test = cp.asarray(X.iloc[split_idx:].values)
+    y_train = cp.asarray(y.iloc[:split_idx].values)
+    y_test = cp.asarray(y.iloc[split_idx:].values)
     
     print(f"📊 Training on {len(X_train)} games, Testing on {len(X_test)} games.")
 
-    # 5. Define the Search Grid (27 Combinations)
+    # 5. Define the Search Grid (Simplified for Early Stopping)
     param_grid = {
         'learning_rate': [0.01, 0.05, 0.1],
         'max_depth': [3, 5, 7],
-        'n_estimators': [50, 100, 200],
         'objective': ['reg:squarederror'],
-        'random_state': [42]
+        'random_state': [42],
+        'n_estimators': [1000]  # High ceiling; early stopping will handle the rest
     }
     
     grid = list(ParameterGrid(param_grid))
@@ -112,8 +118,10 @@ def tune_hyperparameters():
             # Print and Log
             print(f"✅ Run {i+1} complete in {duration:.2f}s | MAE: {mae:.4f}")
             mlflow.log_metric("duration_seconds", duration)
+            mlflow.log_metric("test_mae", mae) # Crucial for your comparison
             mlflow.log_metric("test_rmse", rmse)
             mlflow.set_tag("model_type", "xgboost_tune")
+            mlflow.set_tag("best_iteration", model.best_iteration)
             
             # log signatures and models
             signature = infer_signature(X_train, preds)

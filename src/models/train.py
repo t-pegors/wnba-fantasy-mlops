@@ -52,63 +52,65 @@ def train_model():
     X = X.select_dtypes(include=['number'])
     X = X.astype('float64')
 
-    # 4. Chronological Train-Test Split (80/20)
-    # We don't use random split in sports, otherwise we'd predict yesterday's game using tomorrow's data!
-    split_idx = int(len(df) * 0.8)
-    X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-    y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
-    
-    print(f"📊 Training on {len(X_train)} games, Testing on {len(X_test)} games.")
-
-    # 5. Define Model Hyperparameters
-    params = {
-        'objective': 'reg:squarederror',
-        'learning_rate': 0.05,
-        'max_depth': 5,
-        'n_estimators': 100,
-        'random_state': 42
-    }
+    # 4. Data Split (Controlled by Config)
+    if config.TRAIN_SPLIT_PERCENT < 1.0:
+        split_idx = int(len(df) * config.TRAIN_SPLIT_PERCENT)
+        X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
+        y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+        print(f"📊 Validation Mode: Training on {len(X_train)} games, Testing on {len(X_test)}.")
+    else:
+        X_train, y_train = X, y
+        X_test, y_test = None, None
+        print(f"📊 Production Mode: Training on ALL {len(X_train)} historical games.")
 
     # 6. Start the MLflow System of Record
     with mlflow.start_run(run_name="xgb_baseline_features"):
         # Log the hyperparameters
-        mlflow.log_params(params)
+        mlflow.log_params(config.XGB_PARAMS)
         
         # Log the dataset size
         mlflow.log_param("train_size", len(X_train))
         
         print("🧠 Training XGBoost Regressor...")
-        model = xgb.XGBRegressor(**params)
+        model = xgb.XGBRegressor(**config.XGB_PARAMS)
         model.fit(X_train, y_train)
         
-        print("🔮 Generating Predictions...")
-        predictions = model.predict(X_test)
         
-        # 7. Evaluate Performance
-        mae = mean_absolute_error(y_test, predictions)
-        rmse = np.sqrt(mean_squared_error(y_test, predictions))
-        
-        print("-" * 30)
-        print(f"📉 XGBoost MAE:  {mae:.2f} Fantasy Points")
-        print(f"📉 XGBoost RMSE: {rmse:.2f} Fantasy Points")
-        print("-" * 30)
-        
-        # Log the metrics
-        mlflow.log_metric("test_mae", mae)
-        mlflow.log_metric("test_rmse", rmse)
-        
-        # Save the feature signatures to DagsHub
-        signature = infer_signature(X_train, predictions)
-        mlflow.xgboost.log_model(model, name="model", signature=signature)
+        # 7. Evaluate Performance (ONLY if we have a test set)
+        if X_test is not None:
+            print("🔮 Generating Predictions for Validation...")
+            predictions = model.predict(X_test)
+            
+            mae = mean_absolute_error(y_test, predictions)
+            rmse = np.sqrt(mean_squared_error(y_test, predictions))
+            
+            print("-" * 30)
+            print(f"📉 XGBoost MAE:  {mae:.2f} Fantasy Points")
+            print(f"📉 XGBoost RMSE: {rmse:.2f} Fantasy Points")
+            print("-" * 30)
+            
+            mlflow.log_metric("test_mae", mae)
+            mlflow.log_metric("test_rmse", rmse)
+            
+            # Save signatures based on the test predictions
+            signature = infer_signature(X_train, predictions)
+            mlflow.xgboost.log_model(model, "model", signature=signature)
+
+            # The Gov-Grade Check
+            if mae < 6.77:
+                print("🏆 SUCCESS: Model beat the Naive Baseline (6.77)!")
+            else:
+                print("⚠️ WARNING: Model did not beat the Naive Baseline. Needs more feature engineering.")
+                
+        else:
+            # In Production Mode, we log the model WITHOUT a signature/test-metrics
+            print("🚀 Skipping Validation (Production Mode). Logging model...")
+            mlflow.xgboost.log_model(model, "model")
         
         # Add a text tag so you can quickly read the features in the UI
         mlflow.set_tag("features_used", ", ".join(X_train.columns))
         
-        # The Gov-Grade Check
-        if mae < 6.77:
-            print("🏆 SUCCESS: Model beat the Naive Baseline (6.77)!")
-        else:
-            print("⚠️ WARNING: Model did not beat the Naive Baseline. Needs more feature engineering.")
+        
 
 if __name__ == "__main__":
     train_model()

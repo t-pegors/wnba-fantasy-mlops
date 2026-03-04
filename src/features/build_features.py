@@ -108,6 +108,32 @@ def engineer_features():
                   on=['PLAYER_ID', 'SEASON'], 
                   how='left')
 
+    # ==============================================================================
+    # 🧬 COLD START MITIGATION: OSINT ROOKIE & INTERNATIONAL PROXIES
+    # ==============================================================================
+    # PURPOSE:
+    # Traditional rolling averages fail for players with zero historical WNBA data 
+    # (e.g., incoming NCAA draft picks or international professionals). To prevent
+    # the DFS optimizer from blindingly ignoring highly efficient, underpriced rookies, 
+    # we inject translation-adjusted proxy baselines gathered via Open Source Intelligence.
+    #
+    # DATA LINEAGE & TRANSLATION MATHEMATICS:
+    # - NCAA Proxies (rookie_proxies.csv): Scraped from Sports-Reference. College 
+    #   production is penalized with a 0.65 multiplier to simulate the WNBA transition.
+    # - INTL Proxies (intl_proxies.csv): Manual scout overrides for overseas leagues. 
+    #   Professional European stats are penalized with a lighter 0.85 multiplier.
+    #
+    # THE FALLBACK CASCADE (DEFENSIVE PROGRAMMING):
+    # To ensure the pipeline never crashes on a missing value, 'PRIOR_SEASON_AVG' 
+    # is populated using a strict hierarchy of trust:
+    #   1. Actual WNBA Prior Season Average (Established Veterans)
+    #   2. OSINT WNBA Rookie Proxy (Tracked Draft Picks & International Pros)
+    #   3. Flat 12.0 FPTS Baseline (Absolute Unknowns / Replacement Level)
+    #
+    # An active audit masks out historical ghosts and strictly alerts the terminal 
+    # if a modern player falls through to the Tier 3 baseline.
+    # ==============================================================================
+    
     print("🧬 Injecting Rookie Pedigree Proxies...")
     
     # 1. Load the OSINT databases
