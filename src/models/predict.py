@@ -20,7 +20,7 @@ def run_inference(dk_df):
     print("🧠 Initiating XGBoost Inference Engine...")
 
     # Load the Production Model
-    model_path = config.PROJECT_ROOT / "models" / "production" / "model.ubj"
+    model_path = config.MODEL_PATH
     if not model_path.exists():
         print(f"❌ Error: No trained model found at {model_path}")
         # Fallback to dummy math so the UI doesn't crash during testing

@@ -51,11 +51,13 @@ def run_bulk_backtest(target_month="2025-05"):
     print("="*60)
     
     # 1. Load the Pipeline
+    # Always use the holdout model — the production model was trained on this
+    # same historical data and would produce artificially inflated results.
     try:
         model = xgb.XGBRegressor()
-        model.load_model(os.path.join(project_root, "src", "models", "model.ubj"))
+        model.load_model(config.HOLDOUT_MODEL_PATH)
     except:
-        print("❌ Could not load XGBoost model.")
+        print("❌ Could not load holdout model. Run: python src/models/tune.py --holdout-season <year>")
         return
 
     df = pd.read_csv(config.PROCESSED_DATA_DIR / "training_features.csv")

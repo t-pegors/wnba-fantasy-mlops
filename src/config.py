@@ -12,6 +12,14 @@ CURATED_DATA_DIR = DATA_DIR / "curated"   # Hand-maintained reference files (tar
 PROCESSED_DATA_DIR = DATA_DIR / "processed"  # ML pipeline outputs
 SLATES_DATA_DIR = DATA_DIR / "slates"     # DraftKings/FanDuel contest salary files
 
+# Production model artifact
+MODEL_PATH = PROJECT_ROOT / "src" / "models" / "production" / "model.ubj"
+
+# Holdout model artifact (train on all-but-one season; never overwrite production)
+HOLDOUT_SEASON = '2025'        # Season to exclude from training and use as evaluation; set to None if not used
+HOLDOUT_MODEL_DIR = PROJECT_ROOT / "src" / "models" / "holdout"
+HOLDOUT_MODEL_PATH = HOLDOUT_MODEL_DIR / "model.ubj"
+
 # --- DATA INGESTION SETTINGS ---
 # WNBA League ID is always '10' in nba_api
 WNBA_LEAGUE_ID = '10'
