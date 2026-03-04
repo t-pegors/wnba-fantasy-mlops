@@ -11,13 +11,13 @@ venv/
 .pytest_cache/
 
 # --- Data
-# Ignore all data files by default; only track DVC pointers and gitignores
-data/*
-!data/**/
+# Ignore large data files per-directory; only track DVC pointers and folder structure
+data/raw/*.csv
+data/rosters/*.csv
+data/curated/*.csv
+data/processed/*.csv
+data/slates/*.csv
 !data/**/*.dvc
-!data/**/.gitignore
-!data/**/*.md
-data/curated/*
 
 # --- DVC ---
 .dvc/tmp/
