@@ -136,15 +136,12 @@ def engineer_features():
     
     print("🧬 Injecting Rookie Pedigree Proxies...")
     
-    # 1. Load the OSINT databases
-    ncaa_path = config.CURATED_DATA_DIR / "rookie_proxies.csv"
-    intl_path = config.CURATED_DATA_DIR / "intl_proxies.csv"
-    
+    # 1. Load the unified proxy database
+    proxy_path = config.PROCESSED_DATA_DIR / "rookie_proxies.csv"
+
     proxy_dfs = []
-    if ncaa_path.exists():
-        proxy_dfs.append(pd.read_csv(ncaa_path)[['match_name', 'WNBA_ROOKIE_PROXY']])
-    if intl_path.exists():
-        proxy_dfs.append(pd.read_csv(intl_path)[['match_name', 'WNBA_ROOKIE_PROXY']])
+    if proxy_path.exists():
+        proxy_dfs.append(pd.read_csv(proxy_path)[['match_name', 'WNBA_ROOKIE_PROXY']])
         
     if proxy_dfs:
         # Combine NCAA and INTL proxies

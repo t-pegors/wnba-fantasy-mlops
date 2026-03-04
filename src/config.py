@@ -8,7 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"        # API-fetched game logs (DVC-tracked)
 ROSTERS_DATA_DIR = DATA_DIR / "rosters"    # API-fetched player metadata per season
-CURATED_DATA_DIR = DATA_DIR / "curated"   # Hand-maintained reference files (proxies, targets)
+CURATED_DATA_DIR = DATA_DIR / "curated"   # Hand-maintained reference files (target lists)
 PROCESSED_DATA_DIR = DATA_DIR / "processed"  # ML pipeline outputs
 SLATES_DATA_DIR = DATA_DIR / "slates"     # DraftKings/FanDuel contest salary files
 
@@ -29,6 +29,10 @@ OVERWRITE = False
 # API Retry Settings
 MAX_RETRIES = 3
 RETRY_DELAY = 5  # Seconds
+
+# Cold-Start / Rookie Translation Factors
+NCAA_ROOKIE_TAX = 0.65   # NCAA → WNBA translation multiplier
+INTL_PRO_TAX = 0.85      # International Pro → WNBA translation multiplier
 
 ###################################################
 # FEATURE ENGINEERING PARAMETERS

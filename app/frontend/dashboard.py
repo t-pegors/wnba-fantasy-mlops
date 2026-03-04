@@ -112,32 +112,36 @@ with tab_vault:
     
     # Load the Data
     vault_df = load_data(config.ROSTERS_DATA_DIR / f"player_vault_{config.CURRENT_SEASON}.csv")
-    ncaa_df = load_data(config.CURATED_DATA_DIR / "rookie_proxies.csv")
-    intl_df = load_data(config.CURATED_DATA_DIR / "intl_proxies.csv")
+    proxies_df = load_data(config.PROCESSED_DATA_DIR / "rookie_proxies.csv")
     golden_df = load_data(config.PROCESSED_DATA_DIR / "training_features.csv")
-    
+
+    ncaa_count = len(proxies_df[proxies_df['ORIGIN_LEAGUE'] == 'NCAA']) if not proxies_df.empty else 0
+    intl_count = len(proxies_df[proxies_df['ORIGIN_LEAGUE'] == 'INTL']) if not proxies_df.empty else 0
+
     # 1. Top-Level Metrics
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Players in Vault", len(vault_df) if not vault_df.empty else 0)
-    col2.metric("NCAA Proxies Loaded", len(ncaa_df) if not ncaa_df.empty else 0)
-    col3.metric("INTL Proxies Loaded", len(intl_df) if not intl_df.empty else 0)
+    col2.metric("NCAA Proxies Loaded", ncaa_count)
+    col3.metric("INTL Proxies Loaded", intl_count)
     col4.metric("Total Historical Rows", f"{len(golden_df):,}" if not golden_df.empty else 0)
-    
+
     st.divider()
-    
-    # 2. The OSINT Databases
-    st.subheader("OSINT Translation Proxies")
+
+    # 2. The Proxy Database
+    st.subheader("Rookie Translation Proxies")
     col_ncaa, col_intl = st.columns(2)
-    
+
     with col_ncaa:
-        st.markdown("**NCAA Draft Targets (0.65 Tax)**")
+        st.markdown(f"**NCAA Draft Targets ({config.NCAA_ROOKIE_TAX} Tax)**")
+        ncaa_df = proxies_df[proxies_df['ORIGIN_LEAGUE'] == 'NCAA'] if not proxies_df.empty else pd.DataFrame()
         if not ncaa_df.empty:
             st.dataframe(ncaa_df, use_container_width=True, hide_index=True)
         else:
             st.warning("No NCAA proxies found.")
-            
+
     with col_intl:
-        st.markdown("**International Pro Targets (0.85 Tax)**")
+        st.markdown(f"**International Pro Targets ({config.INTL_PRO_TAX} Tax)**")
+        intl_df = proxies_df[proxies_df['ORIGIN_LEAGUE'] == 'INTL'] if not proxies_df.empty else pd.DataFrame()
         if not intl_df.empty:
             st.dataframe(intl_df, use_container_width=True, hide_index=True)
         else:
