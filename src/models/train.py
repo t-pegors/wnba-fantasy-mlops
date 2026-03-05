@@ -55,8 +55,9 @@ def train_model(holdout_season=None):
             print(f"❌ 'SEASON' column not found in training data. Cannot create holdout split.")
             return
 
-        train_df = df[df['SEASON'] != holdout_season].copy()
-        holdout_df = df[df['SEASON'] == holdout_season].copy()
+        holdout_season_val = int(holdout_season)
+        train_df = df[df['SEASON'] != holdout_season_val].copy()
+        holdout_df = df[df['SEASON'] == holdout_season_val].copy()
 
         if train_df.empty:
             print(f"❌ No training rows remain after excluding season {holdout_season}.")

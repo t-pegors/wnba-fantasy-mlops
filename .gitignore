@@ -19,6 +19,7 @@ data/curated/*.csv
 data/processed/*.csv
 data/slates/*.csv
 !data/**/*.dvc
+tests/*.png
 
 # --- DVC ---
 .dvc/tmp/

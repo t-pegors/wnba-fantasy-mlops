@@ -68,8 +68,9 @@ def tune_hyperparameters(holdout_season=None):
             print("❌ 'SEASON' column not found. Cannot create holdout split.")
             return
 
-        train_mask = df['SEASON'] != holdout_season
-        test_mask  = df['SEASON'] == holdout_season
+        holdout_season_val = int(holdout_season)
+        train_mask = df['SEASON'] != holdout_season_val
+        test_mask  = df['SEASON'] == holdout_season_val
 
         if train_mask.sum() == 0 or test_mask.sum() == 0:
             print(f"❌ Season split produced an empty set. Check holdout_season='{holdout_season}'.")
@@ -133,10 +134,11 @@ def tune_hyperparameters(holdout_season=None):
                 verbose=False
             )
 
-            preds = model.predict(X_test)
+            # Predict on numpy (avoids libnvrtc CuPy output dependency)
+            preds = model.predict(X_test_pd.values)
 
-            mae      = mean_absolute_error(y_test, preds)
-            rmse     = np.sqrt(mean_squared_error(y_test, preds))
+            mae      = mean_absolute_error(y_test_pd.values, preds)
+            rmse     = np.sqrt(mean_squared_error(y_test_pd.values, preds))
             duration = time.time() - start_time
 
             print(f"✅ Run {i+1} complete in {duration:.2f}s | MAE: {mae:.4f}")
@@ -146,7 +148,7 @@ def tune_hyperparameters(holdout_season=None):
             mlflow.set_tag("model_type", "xgboost_tune")
             mlflow.set_tag("best_iteration", model.best_iteration)
 
-            signature = infer_signature(X_train, preds)
+            signature = infer_signature(X_train_pd.values, preds)
             mlflow.xgboost.log_model(model, name="model", signature=signature)
             mlflow.set_tag("features_used", ", ".join(feature_names))
 
