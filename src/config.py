@@ -9,6 +9,11 @@ DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"        # API-fetched game logs (DVC-tracked)
 ROSTERS_DATA_DIR = DATA_DIR / "rosters"    # API-fetched player metadata per season
 CURATED_DATA_DIR = DATA_DIR / "curated"   # Hand-maintained reference files (target lists)
+
+# Game day contest tracking (DVC-tracked → private S3; builds season-long evaluation dataset)
+SLATE_SCORES_PATH = CURATED_DATA_DIR / "slate_scores.csv"   # One row per player per slate
+CONTEST_LOG_PATH  = CURATED_DATA_DIR / "contest_log.csv"    # One row per contest (summary)
+LAST_RETRAINED    = '2026-03-03'   # Update after each production model retrain
 PROCESSED_DATA_DIR = DATA_DIR / "processed"  # ML pipeline outputs
 SLATES_DATA_DIR = DATA_DIR / "slates"     # DraftKings/FanDuel contest salary files
 
@@ -92,6 +97,7 @@ TARGET_COL = 'FANTASY_PTS'
 SCORING_DIR = PROJECT_ROOT / "config" / "scoring"
 
 # FANTASY GAME CONSTRAINTS (e.g., DraftKings WNBA Rules)
+# Legacy top-level values — kept for backward compatibility with bulk_backtest.py
 SALARY_CAP = 50000
 ROSTER_SLOTS = {
     'G': 2,    # Guards
@@ -99,6 +105,60 @@ ROSTER_SLOTS = {
     'UTIL': 1  # Utility (Any position)
 }
 TOTAL_SLOTS = 6
+
+# --- MULTI-PLATFORM DFS CONFIGS ---
+# Salary caps and roster slots for FanDuel/Yahoo are approximate.
+# Verify from the first live slate CSV and update these values if needed.
+PLATFORM_CONFIGS = {
+    'draftkings': {
+        'display_name': 'DraftKings',
+        'salary_cap':   50000,
+        'roster_slots': {'G': 2, 'F': 3, 'UTIL': 1},
+        'total_slots':  6,
+        'scoring_system': 'wnba_default',
+        'csv_columns': {
+            'name':      'Name',
+            'salary':    'Salary',
+            'position':  'Position',
+            'team':      'TeamAbbrev',
+            'game_info': 'Game Info',
+            'injury':    None,           # DK omits scratched players from slate entirely
+            'starting':  None,
+        },
+    },
+    'fanduel': {
+        'display_name': 'FanDuel',
+        'salary_cap':   60000,   # ← verify from first FD slate
+        'roster_slots': {'G': 2, 'F': 3, 'UTIL': 1},   # ← verify
+        'total_slots':  6,
+        'scoring_system': 'fanduel_wnba',
+        'csv_columns': {
+            'name':      'Nickname',   # FD exports use Nickname, not Name
+            'salary':    'Salary',
+            'position':  'Position',
+            'team':      'Team',
+            'game_info': 'Game',
+            'injury':    'Injury Indicator',  # O / D / Q
+            'starting':  None,
+        },
+    },
+    'yahoo': {
+        'display_name': 'Yahoo DFS',
+        'salary_cap':   200,     # ← verify; Yahoo uses a credits system
+        'roster_slots': {'G': 2, 'F': 3, 'UTIL': 1},   # ← verify
+        'total_slots':  6,
+        'scoring_system': 'yahoo_wnba',
+        'csv_columns': {
+            'name':      'Name',
+            'salary':    'Salary',
+            'position':  'Position',
+            'team':      'Team',
+            'game_info': 'Game',
+            'injury':    'Injury Status',
+            'starting':  'Starting',     # Yes / No — treat No as effectively Out
+        },
+    },
+}
 
 
 

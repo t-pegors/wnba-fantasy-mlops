@@ -16,10 +16,13 @@ data/raw/*.csv
 data/rosters/*.csv
 data/curated/*.csv
 !data/curated/target_rookies.csv
+# slate_scores.csv and contest_log.csv are DVC-tracked (private S3) — not git
 data/processed/*.csv
 data/slates/*.csv
 !data/**/*.dvc
 tests/*.png
+tests/fixtures/*.csv
+tests/player_vault_diagnostics.py
 
 # --- DVC ---
 .dvc/tmp/

@@ -12,12 +12,46 @@ if project_root not in sys.path:
 from src import config
 from src.utils.data_utils import normalize_name
 
-def run_inference(dk_df):
+def run_inference(dk_df, platform_cfg=None):
     """
-    Takes a raw DraftKings slate dataframe, hydrates it with historical 
-    features and OSINT proxies, and runs it through the XGBoost model.
+    Takes a raw DFS slate dataframe, hydrates it with historical features and
+    OSINT proxies, and runs it through the XGBoost model.
+
+    Parameters
+    ----------
+    dk_df : pd.DataFrame
+        Raw CSV export from any supported DFS platform.
+    platform_cfg : dict, optional
+        Entry from config.PLATFORM_CONFIGS. Defaults to DraftKings if omitted.
     """
+    if platform_cfg is None:
+        platform_cfg = config.PLATFORM_CONFIGS['draftkings']
+
     print("🧠 Initiating XGBoost Inference Engine...")
+
+    # Normalize platform-specific column names to internal standard schema
+    col = platform_cfg['csv_columns']
+    rename_map = {}
+    if col['name'] != 'Name':
+        rename_map[col['name']] = 'Name'
+    if col['salary'] != 'Salary':
+        rename_map[col['salary']] = 'Salary'
+    if col['position'] != 'Position':
+        rename_map[col['position']] = 'Position'
+    if rename_map:
+        dk_df = dk_df.rename(columns=rename_map)
+
+    # Normalize injury status to a standard Injury_Status column
+    inj_col      = col.get('injury')
+    starting_col = col.get('starting')
+    if inj_col and inj_col in dk_df.columns:
+        dk_df['Injury_Status'] = dk_df[inj_col].fillna('').astype(str).str.strip()
+    else:
+        dk_df['Injury_Status'] = ''
+    # Yahoo: treat Starting=No as Out when no other injury flag is set
+    if starting_col and starting_col in dk_df.columns:
+        not_starting = dk_df[starting_col].astype(str).str.strip().str.lower() == 'no'
+        dk_df.loc[not_starting & (dk_df['Injury_Status'] == ''), 'Injury_Status'] = 'O'
 
     # Load the Production Model
     model_path = config.MODEL_PATH
@@ -31,7 +65,7 @@ def run_inference(dk_df):
     model = xgb.XGBRegressor()
     model.load_model(model_path)
 
-    # 2. Normalize the DraftKings Names for Matching
+    # 2. Normalize Names for Matching
     dk_df['match_name'] = dk_df['Name'].apply(normalize_name)
 
     # 3. Load the Golden Table (To grab the most recent player anchors)

@@ -35,7 +35,7 @@ src/
     data_utils.py         # Name normalization, position mapping, scoring loader
 
 app/frontend/
-  dashboard.py            # Streamlit UI (Daily Optimizer / Data Vault / Model Health tabs)
+  dashboard.py            # Streamlit UI (4 tabs: Daily Optimizer / Data Vault / Game Day Log / Model Health)
 
 config/scoring/
   wnba_default.yml        # Fantasy point weights (configurable without code changes)
@@ -44,7 +44,7 @@ config/scoring/
 data/
   raw/                    # API-fetched WNBA game logs (DVC-tracked, stored in AWS S3)
   rosters/                # API-fetched player metadata per season (player_vault_*.csv)
-  curated/                # Hand-maintained input files (target_rookies.csv — edit to add draft targets)
+  curated/                # Hand-maintained input files (target_rookies.csv, slate_scores.csv, contest_log.csv)
   processed/              # ML pipeline outputs (training_features.csv, rookie_proxies.csv)
   slates/                 # DraftKings/FanDuel contest salary CSVs (optimizer input)
 
@@ -77,8 +77,15 @@ GitHub Actions (2 AM EST)
 - **Rookie workflow**: Edit `data/curated/target_rookies.csv` (ORIGIN_LEAGUE = NCAA or INTL, fill MANUAL_PROXY for INTL), then run `python src/data/build_rookie_proxies.py` to regenerate `processed/rookie_proxies.csv`.
 - **No data leakage**: Raw box score stats (PTS, REB, etc.) are dropped before training; only engineered features used.
 - **Temporal validation**: Data sorted chronologically; no future information leaks into past predictions.
-- **Scoring abstraction**: Fantasy point weights live in `config/scoring/*.yml` — change scoring systems without touching code.
+- **Scoring abstraction**: Fantasy point weights live in `config/scoring/*.yml` — change scoring systems without touching code. Current files: `wnba_default.yml` (ESPN/legacy), `fanduel_wnba.yml`, `yahoo_wnba.yml`. **⚠️ Verify all platform scoring weights against official rules before the 2026 season opens** — see Season Start checklist.
+- **Platform-specific models (future)**: DK, FanDuel, and Yahoo use meaningfully different scoring rules (e.g. DK STL/BLK = 2.0 pts vs. FD/Yahoo = 3.0 pts; DK has double-double bonuses; FD has no 3PM scoring). The current single model predicts relative player quality, which generalizes across platforms. However, platform-specific FPTS labels may warrant separate per-platform model training once sufficient labeled data accumulates in `slate_scores.csv`.
 - **DVC + S3**: Raw data files are not in git. Only `.dvc` pointer files are committed. Run `dvc pull` to hydrate data locally.
+- **Game day logging**: Two files in `data/curated/` track live season performance. `slate_scores.csv` stores predicted + actual FPTS for every player on each slate (pre-populated from Tab 1 on game day; actuals entered in Tab 3 post-game). `contest_log.csv` stores one summary row per contest (lineup score, cash line, W/L, P&L). Both are **DVC-tracked (private, S3)** and build into a 2026 training/audit dataset over the season.
+- **Dashboard tab order**: Data Vault & OSINT is tab 1 (default on load); Daily Optimizer is tab 2; Game Day Log is tab 3; Model Health is tab 4. No emoji icons in tab labels.
+- **Daily Optimizer UI**: Tab 2 uses platform sub-tabs (DraftKings / FanDuel / Yahoo DFS). Each tab has a 4-step wizard: (1) Upload Slate — file uploader with injury summary and slate stats; (2) Generate Lineup — runs XGBoost inference then PuLP optimizer (gray button, ~1/5 row width); (3) Review & Edit — slot-based table (G/G/F/F/F/UTIL) with position-filtered player dropdowns for manual swaps, live salary/projection totals, over-cap warning; (4) Save / Delete — writes to `slate_scores.csv`, disabled when over cap. Session state keys are prefixed per platform (`slate_{pk}`, `lineup_{pk}`, `saved_{pk}`, `fingerprint_{pk}`). The raw slate is stored once on upload; Step 2 overwrites it with the inferred version (with `Predicted_Pts`) — never allow Step 1 to overwrite back.
+- **Session state restoration**: On page load, Tab 2 reconstructs `lineup_{pk}`, `slate_{pk}`, and `saved_{pk}` from today's rows in `slate_scores.csv` if session state is empty. Guard: skipped if `lineup_{pk}` already in session state (avoids clobbering live state).
+- **Logo assets**: Drop platform/WNBA logos in `app/frontend/assets/logos/`. Supported formats: `.png`, `.jpg`, `.jpeg`, `.svg` (SVG rendered via base64 HTML). WNBA logo renders centered above the page title. Platform logos are embedded inside the Today's Slates status tiles. Use `_find_logo(name)` / `_show_logo(name, width, center=False)` helpers in `dashboard.py`.
+- **Data Vault tab**: Section 1 — WNBA Game Logs: metrics (game dates logged, players w/ appearances, most recent game) + 5-row per-date table from `data/raw/wnba_{CURRENT_SEASON}_gamelogs.csv`. Section 2 — Players: currently rostered count from vault + NCAA/INTL proxy counts + rookie proxy tables. Section 3 — Feature Engineering golden table (unchanged). The vault player count is smaller than game log appearances because `build_player_vault.py` only captures players with a current team assignment — waived players drop out. Run the vault builder more frequently during the season to minimize this gap.
 
 ---
 
@@ -104,8 +111,11 @@ All key settings live in `src/config.py`:
 - `SEASONS_TO_FETCH`: historical seasons for data pulls and backtesting
 - `NCAA_ROOKIE_TAX` / `INTL_PRO_TAX`: cold-start translation multipliers
 - `ROLLING_WINDOW_SHORT` / `ROLLING_WINDOW_LONG`: feature window sizes (3 and 10 games)
-- `SALARY_CAP`, `ROSTER_SLOTS`, position constraints: DraftKings lineup rules
+- `PLATFORM_CONFIGS`: per-platform dict (DraftKings / FanDuel / Yahoo) — each entry contains `display_name`, `salary_cap`, `roster_slots`, `total_slots`, `scoring_system`, and `csv_columns` (maps internal names to the platform's actual CSV column headers, including `injury` and `starting` columns). FanDuel/Yahoo salary caps and roster shapes are marked `# ← verify` and should be confirmed from the first real slate before the season.
+- `SALARY_CAP` / `ROSTER_SLOTS`: legacy top-level DraftKings values kept for backward compatibility with `bulk_backtest.py` — use `PLATFORM_CONFIGS` for all new code
 - `DROPPED_FEATURES`: columns excluded from model input
+- `LAST_RETRAINED`: date string used by Model Health tab to flag stale models (update after each production retrain)
+- `SLATE_SCORES_PATH` / `CONTEST_LOG_PATH`: paths to game day tracking files
 - XGBoost hyperparameters (tuned via `tune.py`)
 
 ---
@@ -162,11 +172,14 @@ streamlit run app/frontend/dashboard.py
 - [ ] Re-run `python src/data/build_rookie_proxies.py` for final proxy values
 
 ### Season Start (May)
+- [ ] **Verify DraftKings, FanDuel, and Yahoo WNBA scoring rules against official 2026 published rules** — update `config/scoring/*.yml` to match exactly before entering any real-money contests. Key differences to check: STL/BLK multipliers, TOV penalty, 3PM bonus, double-double/triple-double bonuses (DK only).
 - [ ] Update `CURRENT_SEASON = '2026'` in `config.py`
 - [ ] Add `'2026'` to `SEASONS_TO_FETCH` in `config.py`
 - [ ] Run `python src/data/build_player_vault.py` once initial rosters are posted
 - [ ] Begin monitoring Model Health tab for drift as 2026 game logs accumulate
 - [ ] Consider retraining model after ~3-4 weeks of 2026 data (enough to update priors)
+- [ ] On game days: in Tab 1, select a platform sub-tab → upload salary CSV (Step 1) → Generate Optimal Lineup (Step 2) → review/edit slot-based lineup (Step 3) → Save Predicted Slate (Step 4). Repeat for each platform.
+- [ ] After each game: go to Tab 3, select the date and platform, enter actual player scores, submit contest result
 
 ### Mid-Season
 - [ ] Re-run `python src/data/build_player_vault.py` after trade deadline (rosters change)
@@ -186,6 +199,8 @@ streamlit run app/frontend/dashboard.py
 | `data/rosters/player_vault_*.csv` | DVC → S3 | Rate-limited API; takes 5-10 min per season to rebuild |
 | `data/processed/training_features.csv` | DVC → S3 | Versioned snapshot of Golden Table tied to each model |
 | `data/curated/target_rookies.csv` | git | Hand-authored; small; you want full diff history |
+| `data/curated/slate_scores.csv` | DVC → S3 | Private contest data; not public on GitHub |
+| `data/curated/contest_log.csv` | DVC → S3 | Private contest data; not public on GitHub |
 | `data/processed/rookie_proxies.csv` | neither (gitignored) | Fast to regenerate from `target_rookies.csv` |
 | `data/slates/` | neither (gitignored) | Ephemeral contest files; no value in versioning |
 
@@ -212,6 +227,7 @@ dvc push
 - After daily ingest runs (game logs grow) — the GitHub Action updates the `.dvc` pointer but doesn't push the data
 - After building a new player vault (`build_player_vault.py`)
 - After retraining and regenerating `training_features.csv`
+- After each game night once real contest data is in `slate_scores.csv` / `contest_log.csv`
 
 ---
 

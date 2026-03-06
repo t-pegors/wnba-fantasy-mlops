@@ -1,0 +1,13 @@
+name: "FanDuel WNBA"
+description: >
+  FanDuel WNBA DFS scoring weights.
+  WARNING: Verify these values against the official FanDuel scoring rules before
+  using for real-money contests. Update and remove this warning when confirmed.
+weights:
+  PTS: 1.0
+  REB: 1.2
+  AST: 1.5
+  STL: 3.0
+  BLK: 3.0
+  FG3M: 0.0
+  TOV: -1.0
